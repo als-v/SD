@@ -1,5 +1,6 @@
 import threading 
 import socket 
+from datetime import date
 
 host = ""
 port = 7000
@@ -9,7 +10,7 @@ serv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serv_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
 serv_socket.bind(addr)
 
-BUFFER_SIZE = 4
+comandos = "========= Servidor do Juan e do Alisson =========\n;EXIT: finaliza a conexão com o servidor;TIME: retorna a hora do sistema;DATE: retorna a data do sistema;FILES: retorna os arquivos da pasta compartilhada;HELP: lista os comandos;DOWN 'nomeArquivo': faz o download de um arquivo;"
 
 def programa(ip, port, con): 
     while True : 
@@ -23,8 +24,13 @@ def programa(ip, port, con):
             print('Digitou:', msg_str)
             break
 
+        if(msg_str == 'HELP'):
+            con.send(comandos.encode('utf-8'))
+
         if(msg_str == "DATE"):
             print('Digitou:', msg_str)
+            dataAtual = date.today().strftime('%d/%m/%Y')
+            con.send(dataAtual.encode('utf-8'))
 
         if(msg_str == "TIME"):
             print('Digitou:', msg_str)

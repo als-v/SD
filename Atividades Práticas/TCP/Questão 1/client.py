@@ -9,27 +9,20 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 client_socket.connect(addr)
 
-comandos = [
-    "EXIT",
-    "TIME",
-    "DATE",
-    "FILES",
-    "HELP",
-    "DOWN 'nomeArquivo'"
-]
 def main():
     while True:
-        entrada = input("comando: ")
-        
-        # Lista os comandos
-        if(entrada == "HELP"):
-            for c in comandos:
-                print(c)
-            break
+        entrada = input("comando: ").upper()
 
         # Envia mensagem
         client_socket.send(entrada.encode("utf-8"))
+        # client_socket.send(bytearray(entrada, encoding='utf-8'))
         
+        # Lista os comandos
+        if(entrada == "HELP"):
+            comandos = client_socket.recv(1024).decode('utf-8')
+            for comandos in comandos.split(';'):
+                print(comandos)
+
         # Envia a mensagem e fecha a conexão
         if(entrada == "EXIT"):
             client_socket.close()
@@ -41,7 +34,7 @@ def main():
         
         # Retorna a data do sistema
         if(entrada == "DATE"):
-            pass
+            print(client_socket.recv(1024).decode('utf-8'))
 
         # Recebe os arquivos da pasta padrão
         if(entrada == "FILES"):
