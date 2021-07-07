@@ -16,52 +16,77 @@ comandos = "========= Servidor do Juan e do Alisson =========\n;EXIT: finaliza a
 
 def programa(ip, port, con): 
     while True : 
-        # recebe a mensagem
+        # Recebe a mensagem
         msg = con.recv(1024)
 
-        # decodifica a mensagem
+        # Decodifica a mensagem
         msg_str = msg.decode('utf-8')
         
+        # Notifica servidor sobre a saída do cliente
         if(msg_str == 'EXIT'):
-            print('Digitou:', msg_str)
+            print('Cliente com o ip: ', ip, ', na porta: ', port, ', foi desconectado!')
             break
 
+        # Mostra os comandos do servidor
         if(msg_str == 'HELP'):
             con.send(comandos.encode('utf-8'))
 
+        # Retorna a data do servidor
         if(msg_str == "DATE"):
-            print('Digitou:', msg_str)
             dataAtual = date.today().strftime('%d/%m/%Y')
             con.send(dataAtual.encode('utf-8'))
 
+        # Retorna o horario do servidor
         if(msg_str == "TIME"):
             horarioServidor = datetime.now().strftime('%H:%M:%S')
             con.send(horarioServidor.encode('utf-8'))
 
+        # Lista os arquivos do servidor
         if(msg_str == "FILES"):
-            qtdeFiles = os.listdir(path='./server_files')
-            con.send(str(len(qtdeFiles)).encode('utf-8'))
-            for dir in qtdeFiles:
+            # todos os arquivos do diretorio
+            arquivos = os.listdir(path='./server_files')
+            con.send(str(len(arquivos)).encode('utf-8'))
+
+            # para cada um dos arquivos (desconsiderando as pastas), envia o nome deles
+            for dir in arquivos:
                 if(len(dir.split('.')) == 2):
                     time.sleep(0.1)
                     con.send(dir.encode('utf-8'))
             con.send("Alisson".encode('utf-8'))
-            print(qtdeFiles)
-            
 
+        # Baixar um arquivo do servidor
         if((msg_str.split())[0] == 'DOWN'):
-            print('Digitou:', msg_str)
+            # todos os arquivos do diretorio
+            arquivos = os.listdir(path='./server_files')
+            nomeArquivo = msg_str.split()[1]
+
+            # caso tenha o arquivo no diretorio
+            if nomeArquivo in arquivos:
+                # envia os bytes do arquivo
+                con.send(str(os.stat('./server_files/' + nomeArquivo).st_size).encode('utf-8'))
+
+                # abre o arquivo, e envia byte a byte 
+                with open('./server_files/' + nomeArquivo, 'r+b') as file:
+                    byte = file.read(1)
+
+                    while byte != b'':
+                        time.sleep(0.1)
+                        con.send(byte)
+                        byte = file.read(1)
+            # caso não tenha o arquivo
+            else:
+                con.send(str(0).encode('utf-8'))
 
 def main():
     vetorThreads = []
 
     while 1:
-        # Limite de 1 conexão
-        serv_socket.listen(10)
+        # Limite de 5 conexões
+        serv_socket.listen(5)
 
         # Servidor escuta as conexões
         (con, (ip,port) ) = serv_socket.accept()
-        print('Conexão aceita!\n', con, ip, port)
+        print('Sessão com o cliente: ', ip, ', na porta: ', port, ', foi estabelecida!')
 
         # Cria e inicia uma thread para cada cliente que chega
         thread = threading.Thread(target=programa, args=(ip, port, con, ))
