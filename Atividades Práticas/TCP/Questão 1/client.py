@@ -39,6 +39,13 @@ def main():
 
         # Recebe os arquivos da pasta padrão
         if(entrada == "FILES"):
+            files = client_socket.recv(1024).decode('utf-8')
+            print(files)
+            while 1:
+                arquivoNomes = client_socket.recv(1024).decode('utf-8')
+                if(arquivoNomes == "Alisson"):
+                    break
+                print(arquivoNomes)
             pass
 
         # Faz o download de um arquivo

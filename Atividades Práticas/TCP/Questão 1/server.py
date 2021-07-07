@@ -1,6 +1,8 @@
 import threading 
 import socket 
 from datetime import date, datetime
+import os
+import time
 
 host = ""
 port = 7000
@@ -35,10 +37,17 @@ def programa(ip, port, con):
         if(msg_str == "TIME"):
             horarioServidor = datetime.now().strftime('%H:%M:%S')
             con.send(horarioServidor.encode('utf-8'))
-            # print('Horário:', horarioServidor)
 
         if(msg_str == "FILES"):
-            print('Digitou:', msg_str)
+            qtdeFiles = os.listdir(path='./server_files')
+            con.send(str(len(qtdeFiles)).encode('utf-8'))
+            for dir in qtdeFiles:
+                if(len(dir.split('.')) == 2):
+                    time.sleep(0.1)
+                    con.send(dir.encode('utf-8'))
+            con.send("Alisson".encode('utf-8'))
+            print(qtdeFiles)
+            
 
         if((msg_str.split())[0] == 'DOWN'):
             print('Digitou:', msg_str)
