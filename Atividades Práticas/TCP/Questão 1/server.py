@@ -1,5 +1,6 @@
 import threading 
 import socket 
+from datetime import datetime
 
 host = ""
 port = 7000
@@ -27,7 +28,9 @@ def programa(ip, port, con):
             print('Digitou:', msg_str)
 
         if(msg_str == "TIME"):
-            print('Digitou:', msg_str)
+            horarioServidor = datetime.now().strftime('%H:%M:%S')
+            con.send(horarioServidor.encode('utf-8'))
+            # print('Horário:', horarioServidor)
 
         if(msg_str == "FILES"):
             print('Digitou:', msg_str)

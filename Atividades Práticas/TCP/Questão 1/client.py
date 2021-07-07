@@ -1,5 +1,5 @@
 import socket 
-import os
+import os   
 
 ip = "127.0.0.1"
 port = 7000
@@ -37,6 +37,7 @@ def main():
 
         # Retorna a hora do sistema
         if(entrada == "TIME"):
+            print(client_socket.recv(1024).decode("utf-8"))
             pass
         
         # Retorna a data do sistema
