@@ -43,7 +43,6 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
         # Envia o nome do arquivo
         for nome in nomeArquivo:
             byte = str.encode(nome)
-            print("nome",nome)
             client_socket.send(byte) 
         
         return True
@@ -100,28 +99,34 @@ def main():
                     elif(respostaStatus == 2):
                         print('Erro ao deletar arquivo')
 
-        # Retorna a data do sistema
+        # GETFILESLIST
         if(entrada.split()[0] == "GETFILESLIST"):
             # str nomeArquivo
             nomeArquivo = ""
+            #Lista de arquivos
             listaNomeArquivo = []
+
             #Caso o retorno da função enviaCabecalho seja verdadeira
             if enviaCabecalho(entrada, nomeArquivo, 3):
+                #Espera o retorno da resposta 
                 resposta = client_socket.recv(3)
                 respostaTipo = int(resposta[0])
                 respostaComando = int(resposta[1])
                 respostaStatus = int(resposta[2])
 
                 if (respostaTipo == 2 and respostaComando == 3):
-                    print("Aqui")
+                    #Caso o status da resposta seja igual a SUCESS
                     if (respostaStatus == 1):
+                        #Recebe a quantidade de arquivos
                         numeroArquivos = int.from_bytes(client_socket.recv(2), byteorder='big')
                         print("Número de Arquivos:", numeroArquivos)
 
+                        #Recebe o número de arquivos byte a byte
                         for _ in range(numeroArquivos):
                             tamanhoNomeArquivo = int.from_bytes(client_socket.recv(1), byteorder='big')
                             print("\tTamanho do Arquivo:", tamanhoNomeArquivo)
                             
+                            #Recebe a nome dos arquivos e guarda em uma lista
                             for _ in range(tamanhoNomeArquivo):
                                 caract = client_socket.recv(1)
                                 nomeArquivo += caract.decode('utf-8')
@@ -132,7 +137,7 @@ def main():
                         print("Erro ao listar os arquivos")
                             
 
-        # Recebe os arquivos da pasta padrão
+        # GETFILE
         if(entrada.split()[0] == "GETFILE"):
             #Verifica o nome do arquivo
             nomeArquivo = entrada.split()[1]
@@ -149,13 +154,11 @@ def main():
                     #Verifica se o status da resposta é igual a 1 (1 = SUCESS)
                     if respostaStatus == 1:
                         tamanhoArquivo = int.from_bytes(client_socket.recv(4), byteorder='big')
-                        print(tamanhoArquivo)
 
                         #Recebe byte a byte
                         arquivo = b''
                         for _ in range(tamanhoArquivo):
                             byte = client_socket.recv(1)
-                            print(byte)
                             arquivo += byte
 
                         #Cria um novo arquivo

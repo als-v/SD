@@ -29,7 +29,6 @@ def programa(ip, port, con):
             bytes = con.recv(1)
             nomeArquivo += bytes
         nomeArquivo = nomeArquivo.decode('utf-8')
-        print("Nome Arquivo", nomeArquivo)
 
         # ADDFILE
         if(messageType == 1 and commandIdentif == 1):
@@ -87,23 +86,22 @@ def programa(ip, port, con):
 
             arquivos = os.listdir(path='./server_files')
             
-            if(len(arquivos) > 0):
-                print("Operação GETFILESLIST em execução")
-            else:
+            if(len(arquivos) == 0):
                 print("Não há nenhum arquivo para ser listado")
             
-            
+            #Envia a resposta
             resposta[2] = 1
             con.send(resposta)
+    
+            #Envia a quantidade de arquivos
             con.send(len(arquivos).to_bytes(2, byteorder='big'))
 
+            #Envia o tamanho do nome do arquivo e o nome do arquivo
             for arquivo in arquivos:
                if len(arquivo) < 256:
                     con.send((len(arquivo).to_bytes(1, byteorder='big')))
-                    print("Tamanho", len(arquivo))
                     for nome in arquivo:
                         byte = str.encode(nome)
-                        print(byte)
                         con.send(byte)
 
 
@@ -115,7 +113,6 @@ def programa(ip, port, con):
             resposta[0] = 2
             resposta[1] = commandIdentif
             
-            print("resp",)
             if nomeArquivo in arquivos:
                 resposta[2] = 1
                 con.send(resposta)
