@@ -13,40 +13,47 @@ def main():
     while True:
         entrada = input("comando: ")
 
-        # Adicionar um novo arquivo
+        # ADDFILE
         if(entrada.split()[0] == "ADDFILE"):
             nomeArquivo = entrada.split()[1]
             arquivos = os.listdir(path='./client_files')
 
+            # Vejo se existe o arquivo
             if nomeArquivo in arquivos:
-                fileNameSize = str.encode(str(len(nomeArquivo)))
-
-                if len(fileNameSize) < 256:
-                    messageType = str.encode(str(1))
-                    commandIdentif = str.encode(str(1))
+                fileNameSize = len(nomeArquivo)
+                
+                # Vejo se o nome não passa de 255 bytes
+                if fileNameSize < 256:
+                    messageType = 1
+                    commandIdentif = 1
                     
-                    client_socket.send(messageType)
-                    client_socket.send(commandIdentif)
-                    client_socket.send(fileNameSize)
+                    # Cria o cabecalho
+                    cabecalho = bytearray(3)
+                    cabecalho[0] = messageType
+                    cabecalho[1] = commandIdentif
+                    cabecalho[2] = fileNameSize
 
+                    client_socket.send(cabecalho)
+
+                    # Envia o nome do arquivo
                     for nome in nomeArquivo:
                         byte = str.encode(nome)
                         client_socket.send(byte) 
                     
+                    # Envia o tamanho do arquivo
                     tamanhoArquivo = (os.stat('./client_files/' + nomeArquivo).st_size).to_bytes(4, "big")
                     client_socket.send(tamanhoArquivo)
 
-                    arquivoBytes = b''
+                    # Envia o arquivo
                     with open('./client_files/' + nomeArquivo, 'rb') as file:
                         byte = file.read(1)
                         while byte != b'':
                             client_socket.send(byte)
                             byte = file.read(1)
 
-                    print('aguardando resposta....')
+                    # Espera a resposta
                     resposta = client_socket.recv(3)
-                    print('resposta: ', resposta)
-
+                    
                     if(int(resposta[0]) == 2 and int(resposta[1]) == 1):
                         if(int(resposta[2]) == 1):
                             print('Arquivo copiado com sucesso')
