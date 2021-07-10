@@ -40,10 +40,10 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
         cabecalho[2] = fileNameSize
 
         client_socket.send(cabecalho)
-
         # Envia o nome do arquivo
         for nome in nomeArquivo:
             byte = str.encode(nome)
+            print("nome",nome)
             client_socket.send(byte) 
         
         return True
@@ -102,29 +102,63 @@ def main():
 
         # Retorna a data do sistema
         if(entrada.split()[0] == "GETFILESLIST"):
-            pass
+            # str nomeArquivo
+            nomeArquivo = ""
+            listaNomeArquivo = []
+            #Caso o retorno da função enviaCabecalho seja verdadeira
+            if enviaCabecalho(entrada, nomeArquivo, 3):
+                resposta = client_socket.recv(3)
+                respostaTipo = int(resposta[0])
+                respostaComando = int(resposta[1])
+                respostaStatus = int(resposta[2])
+
+                if (respostaTipo == 2 and respostaComando == 3):
+                    print("Aqui")
+                    if (respostaStatus == 1):
+                        numeroArquivos = int.from_bytes(client_socket.recv(2), byteorder='big')
+                        print("Número de Arquivos:", numeroArquivos)
+
+                        for _ in range(numeroArquivos):
+                            tamanhoNomeArquivo = int.from_bytes(client_socket.recv(1), byteorder='big')
+                            print("\tTamanho do Arquivo:", tamanhoNomeArquivo)
+                            
+                            for _ in range(tamanhoNomeArquivo):
+                                caract = client_socket.recv(1)
+                                nomeArquivo += caract.decode('utf-8')
+                            listaNomeArquivo.append(nomeArquivo)
+                            print("\tNome do Arquivo:", nomeArquivo)
+                            nomeArquivo = ""
+                    else:
+                        print("Erro ao listar os arquivos")
+                            
 
         # Recebe os arquivos da pasta padrão
         if(entrada.split()[0] == "GETFILE"):
+            #Verifica o nome do arquivo
             nomeArquivo = entrada.split()[1]
-                        
+            
+            #Caso o retorno da função enviaCabecalho seja verdadeira
             if enviaCabecalho(entrada, nomeArquivo, 4):
+                #Resposta do servidor
                 resposta = client_socket.recv(3)
                 respostaTipo = int(resposta[0])
                 respostaComando = int(resposta[1])
                 respostaStatus = int(resposta[2])
 
                 if respostaTipo == 2 and respostaComando == 4:
+                    #Verifica se o status da resposta é igual a 1 (1 = SUCESS)
                     if respostaStatus == 1:
                         tamanhoArquivo = int.from_bytes(client_socket.recv(4), byteorder='big')
                         print(tamanhoArquivo)
 
+                        #Recebe byte a byte
                         arquivo = b''
                         for _ in range(tamanhoArquivo):
                             byte = client_socket.recv(1)
                             print(byte)
                             arquivo += byte
 
+                        #Cria um novo arquivo
                         with open ('./client_files/' + nomeArquivo, 'w+b') as file:
                             file.write(arquivo)
                         print("Download concluído com sucesso")

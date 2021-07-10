@@ -79,9 +79,34 @@ def programa(ip, port, con):
             
             con.send(resposta)
         
-        if commandIdentif == 3:
-            pass
-        
+        #GETFILESLIST
+        if messageType == 1 and commandIdentif == 3:
+            resposta = bytearray(3)
+            resposta[0] = 2
+            resposta[1] = 3
+
+            arquivos = os.listdir(path='./server_files')
+            
+            if(len(arquivos) > 0):
+                print("Operação GETFILESLIST em execução")
+            else:
+                print("Não há nenhum arquivo para ser listado")
+            
+            
+            resposta[2] = 1
+            con.send(resposta)
+            con.send(len(arquivos).to_bytes(2, byteorder='big'))
+
+            for arquivo in arquivos:
+               if len(arquivo) < 256:
+                    con.send((len(arquivo).to_bytes(1, byteorder='big')))
+                    print("Tamanho", len(arquivo))
+                    for nome in arquivo:
+                        byte = str.encode(nome)
+                        print(byte)
+                        con.send(byte)
+
+
         #DOWNLOAD
         if (messageType == 1 and commandIdentif == 4):
             arquivos = os.listdir(path='./server_files')
