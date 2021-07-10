@@ -1,3 +1,4 @@
+import os
 import threading 
 import socket 
 
@@ -11,8 +12,51 @@ serv_socket.bind(addr)
 
 def programa(ip, port, con): 
     while True : 
-        # Recebe a mensagem
-        pass
+        # Recebe o tipo da mensagem
+        messageType = int(con.recv(1).decode("utf-8"))
+        # Recebe o comando
+        commandIdentif = int(con.recv(1).decode("utf-8"))
+        # Recebe tamanho do nome do arquivo
+        fileNameSize = con.recv(1).decode("utf-8") 
+        # ADDFILE
+        if(messageType == 1 and commandIdentif == 1):
+            nomeArquivo = b''
+            for _ in range(int(fileNameSize)):
+                bytes = con.recv(1)
+                print('chegou: ', bytes) 
+                nomeArquivo += bytes
+
+            tamanhoArquivo = int.from_bytes(con.recv(4), byteorder='big')
+            
+            arquivo = b''
+            for _ in range(tamanhoArquivo):
+                bytes = con.recv(1)
+                print('chegou: ', bytes) 
+                arquivo += bytes
+            
+            with open('./server_files/' + nomeArquivo.decode('utf-8'), 'w+b') as file:
+                file.write(arquivo)
+
+            resposta = bytearray(3)
+            resposta[0] = 2
+            resposta[1] = 1
+            
+            arquivos = os.listdir(path='./server_files')
+            if nomeArquivo.decode('utf-8') in arquivos:
+                resposta[2] = 1
+            else:
+                resposta[2] = 2
+            
+            con.send(resposta)
+
+        if commandIdentif == 2:
+            pass
+        
+        if commandIdentif == 3:
+            pass
+        
+        if commandIdentif == 4:
+            pass
 
 def main():
     vetorThreads = []
