@@ -13,23 +13,25 @@ serv_socket.bind(addr)
 def programa(ip, port, con): 
     while True : 
         mensagem = con.recv(3)
+
         # Tipo da mensagem
         messageType = int(mensagem[0])
-        # O indeitificado do comando
+
+        # O indentificador do comando
         commandIdentif = int(mensagem[1])
+
         # Tamanho do nome do arquivo
         fileNameSize = int(mensagem[2])
 
+        # Recebe o nome do arquivo
+        nomeArquivo = b''
+        for _ in range(fileNameSize):
+            bytes = con.recv(1)
+            nomeArquivo += bytes
+
         # ADDFILE
         if(messageType == 1 and commandIdentif == 1):
-            # Recebe o nome do arquivo
-            nomeArquivo = b''
-            for _ in range(fileNameSize):
-                bytes = con.recv(1)
-                nomeArquivo += bytes
-
             tamanhoArquivo = int.from_bytes(con.recv(4), byteorder='big')
-            
             # Recebe o arquivo
             arquivo = b''
             for _ in range(tamanhoArquivo):
@@ -52,8 +54,9 @@ def programa(ip, port, con):
                 resposta[2] = 2
             
             con.send(resposta)
-
-        if commandIdentif == 2:
+        
+        # DELETE
+        if(messageType == 1 and commandIdentif == 2):
             pass
         
         if commandIdentif == 3:
