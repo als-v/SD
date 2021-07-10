@@ -28,8 +28,8 @@ def programa(ip, port, con):
         for _ in range(fileNameSize):
             bytes = con.recv(1)
             nomeArquivo += bytes
-
         nomeArquivo = nomeArquivo.decode('utf-8')
+        print("Nome Arquivo", nomeArquivo)
 
         # ADDFILE
         if(messageType == 1 and commandIdentif == 1):
@@ -82,7 +82,29 @@ def programa(ip, port, con):
         if commandIdentif == 3:
             pass
         
-        if commandIdentif == 4:
+        #DOWNLOAD
+        if (messageType == 1 and commandIdentif == 4):
+            arquivos = os.listdir(path='./server_files')
+
+            resposta = bytearray(3)
+            resposta[0] = 2
+            resposta[1] = commandIdentif
+            
+            print("resp",)
+            if nomeArquivo in arquivos:
+                resposta[2] = 1
+                con.send(resposta)
+
+                tamanhoArquivo = (os.stat('./server_files/' + nomeArquivo).st_size).to_bytes(4, "big")
+                con.send(tamanhoArquivo)
+                with open('./server_files/' + nomeArquivo, 'rb') as file:
+                    byte = file.read(1)
+                    while byte != b'':
+                        con.send(byte)
+                        byte = file.read(1)
+            else:
+                resposta[2] = 2
+                 
 
 def main():
     vetorThreads = []

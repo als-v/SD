@@ -23,8 +23,8 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
     elif('GETFILE' == funcao):
         arquivos = os.listdir(path='./client_files')
 
-        if nomeArquivo not in arquivo:
-            return True
+        if nomeArquivo in arquivos:
+            print('O arquivo solicitado já existe')
     
     fileNameSize = len(nomeArquivo)
         
@@ -106,8 +106,32 @@ def main():
 
         # Recebe os arquivos da pasta padrão
         if(entrada.split()[0] == "GETFILE"):
-            nomeArquivo = entrada[1]
-            
+            nomeArquivo = entrada.split()[1]
+                        
             if enviaCabecalho(entrada, nomeArquivo, 4):
+                resposta = client_socket.recv(3)
+                respostaTipo = int(resposta[0])
+                respostaComando = int(resposta[1])
+                respostaStatus = int(resposta[2])
 
+                if respostaTipo == 2 and respostaComando == 4:
+                    if respostaStatus == 1:
+                        tamanhoArquivo = int.from_bytes(client_socket.recv(4), byteorder='big')
+                        print(tamanhoArquivo)
+
+                        arquivo = b''
+                        for _ in range(tamanhoArquivo):
+                            byte = client_socket.recv(1)
+                            print(byte)
+                            arquivo += byte
+
+                        with open ('./client_files/' + nomeArquivo, 'w+b') as file:
+                            file.write(arquivo)
+                        print("Download concluído com sucesso")
+                    
+                    else:
+                        print("Arquivo não encontrado")
+ 
+                
+                
 main()
