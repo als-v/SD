@@ -73,16 +73,32 @@ def main():
 
                 # Espera a resposta
                 resposta = client_socket.recv(3)
+                respostaTipo = int(resposta[0])
+                respostaComando = int(resposta[1])
+                respostaStatus = int(resposta[2])
                 
-                if(int(resposta[0]) == 2 and int(resposta[1]) == 1):
-                    if(int(resposta[2]) == 1):
+                if(respostaTipo == 2 and respostaComando == 1):
+                    if(respostaStatus == 1):
                         print('Arquivo copiado com sucesso')
-                    elif(int(resposta[2]) == 2):
+                    elif(respostaStatus == 2):
                         print('Erro ao copiar arquivo')
 
         # DELETE
         if(entrada.split()[0] == "DELETE"):
-            pass
+            nomeArquivo = entrada.split()[1]
+
+            if enviaCabecalho(entrada, nomeArquivo, 2):
+                # Espera a resposta
+                resposta = client_socket.recv(3)
+                respostaTipo = int(resposta[0])
+                respostaComando = int(resposta[1])
+                respostaStatus = int(resposta[2])
+
+                if(respostaTipo == 2 and respostaComando == 1):
+                    if(respostaStatus == 1):
+                        print('Arquivo deletado com sucesso')
+                    elif(respostaStatus == 2):
+                        print('Erro ao deletar arquivo')
 
         # Retorna a data do sistema
         if(entrada.split()[0] == "GETFILESLIST"):
