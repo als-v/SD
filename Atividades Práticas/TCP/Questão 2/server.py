@@ -63,7 +63,6 @@ def programa(ip, port, con):
             pass
         
         if commandIdentif == 4:
-            pass
 
 def main():
     vetorThreads = []

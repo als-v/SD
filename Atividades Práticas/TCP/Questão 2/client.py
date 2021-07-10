@@ -19,6 +19,12 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
         if nomeArquivo not in arquivos:
             print('O arquivo solicitado não existe')
             return False
+
+    elif('GETFILE' == funcao):
+        arquivos = os.listdir(path='./client_files')
+
+        if nomeArquivo not in arquivo:
+            return True
     
     fileNameSize = len(nomeArquivo)
         
@@ -84,5 +90,8 @@ def main():
 
         # Recebe os arquivos da pasta padrão
         if(entrada.split()[0] == "GETFILE"):
-            pass
+            nomeArquivo = entrada[1]
+            
+            if enviaCabecalho(entrada, nomeArquivo, 4):
+
 main()
