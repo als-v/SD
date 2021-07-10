@@ -29,7 +29,7 @@ def programa(ip, port, con):
             bytes = con.recv(1)
             nomeArquivo += bytes
 
-        nomeArquivo.decode()
+        nomeArquivo = nomeArquivo.decode('utf-8')
 
         # ADDFILE
         if(messageType == 1 and commandIdentif == 1):
@@ -64,14 +64,15 @@ def programa(ip, port, con):
             resposta = bytearray(3)
             resposta[0] = 2
             resposta[1] = 1
-            
+
             if nomeArquivo in arquivos:
                 os.remove('./server_files/' + nomeArquivo)
-
+                
+                arquivos = os.listdir(path='./server_files')
                 if nomeArquivo in arquivos:
                     resposta[2] = 2
                 else:
-                    resposta[1] = 1
+                    resposta[2] = 1
 
             else:
                 resposta[2] = 2
