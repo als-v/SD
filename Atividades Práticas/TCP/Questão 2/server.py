@@ -29,6 +29,8 @@ def programa(ip, port, con):
             bytes = con.recv(1)
             nomeArquivo += bytes
 
+        nomeArquivo.decode()
+
         # ADDFILE
         if(messageType == 1 and commandIdentif == 1):
             tamanhoArquivo = int.from_bytes(con.recv(4), byteorder='big')
@@ -39,7 +41,7 @@ def programa(ip, port, con):
                 arquivo += bytes
             
             # Salva o arquivo
-            with open('./server_files/' + nomeArquivo.decode('utf-8'), 'w+b') as file:
+            with open('./server_files/' + nomeArquivo, 'w+b') as file:
                 file.write(arquivo)
 
             # Preparo a resposta
@@ -48,7 +50,7 @@ def programa(ip, port, con):
             resposta[1] = 1
             
             arquivos = os.listdir(path='./server_files')
-            if nomeArquivo.decode('utf-8') in arquivos:
+            if nomeArquivo in arquivos:
                 resposta[2] = 1
             else:
                 resposta[2] = 2
@@ -57,7 +59,24 @@ def programa(ip, port, con):
         
         # DELETE
         if(messageType == 1 and commandIdentif == 2):
-            pass
+            arquivos = os.listdir(path='./server_files')
+            
+            resposta = bytearray(3)
+            resposta[0] = 2
+            resposta[1] = 1
+            
+            if nomeArquivo in arquivos:
+                os.remove('./server_files/' + nomeArquivo)
+
+                if nomeArquivo in arquivos:
+                    resposta[2] = 2
+                else:
+                    resposta[1] = 1
+
+            else:
+                resposta[2] = 2
+            
+            con.send(resposta)
         
         if commandIdentif == 3:
             pass
