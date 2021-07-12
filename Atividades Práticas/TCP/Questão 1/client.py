@@ -1,3 +1,10 @@
+'''
+    ### QUESTÃO 2 - TCP ###
+    # Autores: Juan e Alisson
+    # Data de criação:      10/07/2021
+    # Data de modificação:  12/07/2021
+'''
+
 import socket 
 
 ip = "127.0.0.1"
@@ -8,6 +15,13 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 client_socket.connect(addr)
 
+'''
+### main() ###
+# Metodo que pega a entrada do cliente, e aguarda
+# a resposta do servidor.
+# Params: 
+    - none
+'''
 def main():
     while True:
         comando = input("comando: ")

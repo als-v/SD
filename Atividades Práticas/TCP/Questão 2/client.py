@@ -1,3 +1,10 @@
+'''
+    ### QUESTÃO 2 - TCP ###
+    # Autores: Juan e Alisson
+    # Data de criação:      10/07/2021
+    # Data de modificação:  12/07/2021
+'''
+
 import os
 import socket 
 
@@ -9,10 +16,19 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 client_socket.connect(addr)
 
-# Função que envia o cabeçalho da requisicao
+'''
+### enviaCabecalho(entrada, nomeArquivo, comando) ###
+# Metodo que envia o cabecalho esperado de todas as 
+# requisicoes ao servidor.
+# Params: 
+    - entrada: comando digitado pelo cliente
+    - nomeArquivo: nome do arquivo passado pelo comando
+    - comando: o identificado do comando
+'''
 def enviaCabecalho(entrada, nomeArquivo, comando):
     funcao = entrada.split()[0]
 
+    # caso não exista o arquivo
     if('ADDFILE' == funcao):
         arquivos = os.listdir(path='./client_files')
 
@@ -20,11 +36,12 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
             print('O arquivo solicitado não existe')
             return False
 
+    # caso o arquivo já exista
     elif('GETFILE' == funcao):
         arquivos = os.listdir(path='./client_files')
 
         if nomeArquivo in arquivos:
-            print('O arquivo solicitado já existe')
+            print('AVISO: O arquivo solicitado já existe')
     
     fileNameSize = len(nomeArquivo)
         
@@ -50,6 +67,13 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
         print('O tamanho do nome do arquivo excedeu o limite de caracteres')
         return False
 
+'''
+### main() ###
+# Metodo que pega a entrada do cliente, e aguarda
+# a resposta do servidor.
+# Params: 
+    - none
+'''
 def main():
     while True:
         entrada = input("comando: ")
@@ -169,6 +193,4 @@ def main():
                     else:
                         print("Arquivo não encontrado")
  
-                
-                
 main()

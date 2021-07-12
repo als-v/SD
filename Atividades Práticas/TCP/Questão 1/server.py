@@ -1,3 +1,10 @@
+'''
+    ### QUESTÃO 1 - TCP ###
+    # Autores: Juan e Alisson
+    # Data de criação:      07/07/2021
+    # Data de modificação:  12/07/2021
+'''
+
 import threading 
 import socket 
 from datetime import date, datetime
@@ -14,6 +21,14 @@ serv_socket.bind(addr)
 
 comandos = "========= Servidor do Juan e do Alisson =========\n;EXIT: finaliza a conexão com o servidor;TIME: retorna a hora do sistema;DATE: retorna a data do sistema;FILES: retorna os arquivos da pasta compartilhada;HELP: lista os comandos;DOWN 'nomeArquivo': faz o download de um arquivo;"
 
+'''
+### programa(ip, port, con) ###
+# Metodo que executa as requisições do cliente
+# Params: 
+    - Ip: ip do cliente
+    - Port: porta que o cliente se conectou
+    - Conexao: a conexao realizada
+'''
 def programa(ip, port, con): 
     while True : 
         # Recebe a mensagem
@@ -77,12 +92,18 @@ def programa(ip, port, con):
             else:
                 con.send(str(0).encode('utf-8'))
 
+'''
+### main() ###
+# Metodo que realiza a conexão do cliente
+# Params: 
+    - none
+'''
 def main():
     vetorThreads = []
 
     while 1:
-        # Limite de 5 conexões
-        serv_socket.listen(5)
+        # Limite de 20 conexões
+        serv_socket.listen(20)
 
         # Servidor escuta as conexões
         (con, (ip,port) ) = serv_socket.accept()

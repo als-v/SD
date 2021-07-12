@@ -1,3 +1,10 @@
+'''
+    ### QUESTÃO 2 - TCP ###
+    # Autores: Juan e Alisson
+    # Data de criação:      10/07/2021
+    # Data de modificação:  12/07/2021
+'''
+
 import os
 import threading 
 import socket 
@@ -10,6 +17,14 @@ serv_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serv_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
 serv_socket.bind(addr)
 
+'''
+### programa(ip, port, con) ###
+# Metodo que executa as requisições do cliente
+# Params: 
+    - Ip: ip do cliente
+    - Port: porta que o cliente se conectou
+    - Conexao: a conexao realizada
+'''
 def programa(ip, port, con): 
     while True : 
         mensagem = con.recv(3)
@@ -64,28 +79,30 @@ def programa(ip, port, con):
             resposta[0] = 2
             resposta[1] = 1
 
+            # caso o arquivo exista no diretorio
             if nomeArquivo in arquivos:
                 os.remove('./server_files/' + nomeArquivo)
                 
+                # remove arquivo e verifica se realmente foi excluido
                 arquivos = os.listdir(path='./server_files')
                 if nomeArquivo in arquivos:
                     resposta[2] = 2
                 else:
                     resposta[2] = 1
-
             else:
                 resposta[2] = 2
             
             con.send(resposta)
         
-        #GETFILESLIST
-        if messageType == 1 and commandIdentif == 3:
+        # GETFILESLIST
+        if(messageType == 1 and commandIdentif == 3):
             resposta = bytearray(3)
             resposta[0] = 2
             resposta[1] = 3
 
             arquivos = os.listdir(path='./server_files')
             
+            # caso nao ha nenhum arquivo no diretorio
             if(len(arquivos) == 0):
                 print("Não há nenhum arquivo para ser listado")
             
@@ -104,8 +121,7 @@ def programa(ip, port, con):
                         byte = str.encode(nome)
                         con.send(byte)
 
-
-        #DOWNLOAD
+        # GETFILE
         if (messageType == 1 and commandIdentif == 4):
             arquivos = os.listdir(path='./server_files')
 
@@ -113,12 +129,16 @@ def programa(ip, port, con):
             resposta[0] = 2
             resposta[1] = commandIdentif
             
+            # se o arquivo existir
             if nomeArquivo in arquivos:
                 resposta[2] = 1
                 con.send(resposta)
 
+                # envia o tamanho do arquivo
                 tamanhoArquivo = (os.stat('./server_files/' + nomeArquivo).st_size).to_bytes(4, "big")
                 con.send(tamanhoArquivo)
+                
+                # envia o arquivo byte a byte
                 with open('./server_files/' + nomeArquivo, 'rb') as file:
                     byte = file.read(1)
                     while byte != b'':
@@ -126,14 +146,19 @@ def programa(ip, port, con):
                         byte = file.read(1)
             else:
                 resposta[2] = 2
-                 
-
+    
+'''
+### main() ###
+# Metodo que realiza a conexão do cliente
+# Params: 
+    - none
+'''
 def main():
     vetorThreads = []
 
     while 1:
-        # Limite de 5 conexões
-        serv_socket.listen(5)
+        # Limite de 20 conexões
+        serv_socket.listen(20)
 
         # Servidor escuta as conexões
         (con, (ip,port) ) = serv_socket.accept()
