@@ -38,10 +38,11 @@ def enviaCabecalho(entrada, nomeArquivo, comando):
 
     # caso o arquivo já exista
     elif('GETFILE' == funcao):
-        arquivos = os.listdir(path='./client_files')
+        arquivos = os.listdir(path='./server_files')
 
-        if nomeArquivo in arquivos:
-            print('AVISO: O arquivo solicitado já existe')
+        if nomeArquivo not in arquivos:
+            print('O arquivo solicitado não existe')
+            return False
     
     fileNameSize = len(nomeArquivo)
         
