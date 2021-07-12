@@ -68,6 +68,8 @@ def main():
                 arquivoNomes = client_socket.recv(1024).decode('utf-8')
                 if(arquivoNomes != "Alisson"):
                     print('   -', arquivoNomes)
+                else:
+                    break
 
         # Faz o download de um arquivo
         if((entrada.split())[0] == 'DOWN'):
