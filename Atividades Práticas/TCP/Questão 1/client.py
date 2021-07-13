@@ -83,7 +83,8 @@ def main():
 
                 # Recebo os bytes do servidor
                 for i in range(int(bytes)):
-                    fileBytes = client_socket.recv(1024)
+                    fileBytes = client_socket.recv(1)
+                    print(fileBytes)
                     arquivo += fileBytes
 
                 # Salvo em um novo arquivo

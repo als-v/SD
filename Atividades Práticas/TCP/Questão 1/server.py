@@ -85,7 +85,6 @@ def programa(ip, port, con):
                     byte = file.read(1)
 
                     while byte != b'':
-                        time.sleep(0.1)
                         con.send(byte)
                         byte = file.read(1)
             # caso não tenha o arquivo
