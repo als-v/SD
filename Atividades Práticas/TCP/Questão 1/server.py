@@ -64,11 +64,8 @@ def programa(ip, port, con):
 
             # para cada um dos arquivos (desconsiderando as pastas), envia o nome deles
             for dir in arquivos:
-                # if(len(dir.split('.')) == 2):
-                    # time.sleep(0.1)
                 print(dir)
                 con.sendall(dir.encode('utf-8'))
-            # con.send("Alisson".encode('utf-8'))
 
         # Baixar um arquivo do servidor
         if((msg_str.split())[0] == 'DOWN'):

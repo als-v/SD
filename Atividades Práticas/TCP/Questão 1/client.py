@@ -70,10 +70,6 @@ def main():
                 arquivoNomes = client_socket.recv(1024).decode('utf-8')
                 listaArquivos.append(arquivoNomes)
                 numFiles -= 1
-                # if(arquivoNomes != "Alisson"):
-                # print('   -', arquivoNomes)
-                # else:
-                #     break
             print("Arquivos", listaArquivos)
 
         # Faz o download de um arquivo
