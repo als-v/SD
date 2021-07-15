@@ -3,6 +3,12 @@
     # Autores: Juan e Alisson
     # Data de criação:      07/07/2021
     # Data de modificação:  12/07/2021
+    #Descrição: Processa mensagens recebidas do cliente, sendo possível executar as seguintes operações:
+        - TIME: Retorna para o cliente o horário do sistema
+        - DATE: Retorna para o ciente a data do sistema
+        - FILES: Retorna para o cliente a quantidade e o nome de arquivos presentes na pasta padrão.
+        - DOWN: Recebe como parâmetro o nome de um arquivo, e caso ele exista na pasta padrão, envia byte a byte para o cliente.
+        - EXIT: Notifica que o cliente desconectou do servidor. 
 '''
 
 import threading 

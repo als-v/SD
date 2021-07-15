@@ -3,6 +3,13 @@
     # Autores: Juan e Alisson
     # Data de criação:      10/07/2021
     # Data de modificação:  12/07/2021
+    #Descrição: O servidor gerencia um conjunto de arquivos remotes, permitindo que vários usuários se conectem.
+    O servidor deve permitir que as seguintes operações sejam realizadas:
+        - ADDFILE: Cria um arquivo na pasta padrão do servidor, recebendo o arquivo byte a byte e o nome do arquvo como parâmetro.
+        - DELETE: Recebe como parâmetro o nome de um arquivo, e caso ele exista na pasta padrão do servidor, ele será excluído.
+        - GETFILESLIST: Retorna para o cliente uma lista com os nomes dos arquivos existentes na pasta padrão do servidor.
+        - GETFILE: Recebe como parâmetro do cliente um nome de arquivo, e caso ele exista, retorna para o cliente o tamanho do arquivo
+            e envia o arquivo em sí byte a byte.
 '''
 
 import os
