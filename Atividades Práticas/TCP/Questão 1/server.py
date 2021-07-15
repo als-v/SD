@@ -60,14 +60,15 @@ def programa(ip, port, con):
         if(msg_str == "FILES"):
             # todos os arquivos do diretorio
             arquivos = os.listdir(path='./server_files')
-            con.send(str(len(arquivos)).encode('utf-8'))
+            con.sendall(str(len(arquivos)).encode('utf-8'))
 
             # para cada um dos arquivos (desconsiderando as pastas), envia o nome deles
             for dir in arquivos:
-                if(len(dir.split('.')) == 2):
-                    time.sleep(0.1)
-                    con.send(dir.encode('utf-8'))
-            con.send("Alisson".encode('utf-8'))
+                # if(len(dir.split('.')) == 2):
+                    # time.sleep(0.1)
+                print(dir)
+                con.sendall(dir.encode('utf-8'))
+            # con.send("Alisson".encode('utf-8'))
 
         # Baixar um arquivo do servidor
         if((msg_str.split())[0] == 'DOWN'):

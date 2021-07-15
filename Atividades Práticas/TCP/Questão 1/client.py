@@ -63,13 +63,18 @@ def main():
         if(entrada == "FILES"):
             files = client_socket.recv(1024).decode('utf-8')
             print('Numero de arquivos encontrados: ', files)
+            numFiles = int(files)
+            listaArquivos = []
 
-            while 1:
+            while numFiles > 0:
                 arquivoNomes = client_socket.recv(1024).decode('utf-8')
-                if(arquivoNomes != "Alisson"):
-                    print('   -', arquivoNomes)
-                else:
-                    break
+                listaArquivos.append(arquivoNomes)
+                numFiles -= 1
+                # if(arquivoNomes != "Alisson"):
+                # print('   -', arquivoNomes)
+                # else:
+                #     break
+            print("Arquivos", listaArquivos)
 
         # Faz o download de um arquivo
         if((entrada.split())[0] == 'DOWN'):
