@@ -2,7 +2,16 @@
     ### QUESTÃO 2 - TCP ###
     # Autores: Juan e Alisson
     # Data de criação:      10/07/2021
-    # Data de modificação:  12/07/2021
+    # Data de modificação:  15/07/2021
+    #Descrição: O cliente é capaz de envia mensagens para o servidor, tendo como propósito realizar operações sobre os arquivos
+        existentes na pasta padrão do servidor. As mensagens que podem ser enviadas para o servidor são:
+        - ADDFILE: Envia byte a byte para o servidor um arquivo que existe na pasta padrão do cliente, copiando o mesmo arquivo 
+            para a pasta padrão do servidor.
+        - DELETE: Passa como parâmetro um nome de arquivo, e caso ele exista na pasta do servidor, será excluído.
+        - GETFILESLIST: Recebe do servidor uma lista com todos os arquivos existentes na pasta padrão do servidor.
+        - GETFILE: Passa como parâmetro um nome de arquivo para o servidor, e caso ele exista na pasta do servidor, 
+            receberá como resposta o arquivo byte a byte, e o tamanho do arquivo. Copiando então o arquivo que estava presente
+            no servidor para o cliente.
 '''
 
 import os

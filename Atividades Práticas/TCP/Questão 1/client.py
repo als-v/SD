@@ -1,8 +1,14 @@
 '''
-    ### QUESTÃO 2 - TCP ###
+    ### QUESTÃO 1 - TCP ###
     # Autores: Juan e Alisson
     # Data de criação:      10/07/2021
-    # Data de modificação:  12/07/2021
+    # Data de modificação:  15/07/2021
+    #Descrição: Envia mensagens para o servidor, podendo solicitar 5 operações. Essas operações são:
+        - TIME: Recebe do servidor o horário do sistema.
+        - DATE: Recebe do servidor a data do sistema.
+        - FILES: Recebe a quantidade e o nome de arquivos presentes na pasta padrão do servidor.
+        - DOWN: Faz o download de um arquivo presente na pasta do servidor, enviando como parâmetro o nome do arquivo desejado.
+        - EXIT: Finaliza a conexão com o servidor.  
 '''
 
 import socket 
@@ -63,13 +69,17 @@ def main():
         if(entrada == "FILES"):
             files = client_socket.recv(1024).decode('utf-8')
             print('Numero de arquivos encontrados: ', files)
+            numFiles = int(files)
+            listaArquivos = []
+            posicaoLista = 0
 
-            while 1:
+            while posicaoLista < numFiles:
                 arquivoNomes = client_socket.recv(1024).decode('utf-8')
-                if(arquivoNomes != "Alisson"):
-                    print('   -', arquivoNomes)
-                else:
-                    break
+                listaArquivos.append(arquivoNomes)
+                print("Arquivos", listaArquivos[posicaoLista])
+                posicaoLista += 1
+            
+            # for arq in listaArquivos:
 
         # Faz o download de um arquivo
         if((entrada.split())[0] == 'DOWN'):
@@ -83,7 +93,7 @@ def main():
 
                 # Recebo os bytes do servidor
                 for i in range(int(bytes)):
-                    fileBytes = client_socket.recv(1024)
+                    fileBytes = client_socket.recv(1)
                     arquivo += fileBytes
 
                 # Salvo em um novo arquivo

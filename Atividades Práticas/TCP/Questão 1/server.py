@@ -2,7 +2,13 @@
     ### QUESTÃO 1 - TCP ###
     # Autores: Juan e Alisson
     # Data de criação:      07/07/2021
-    # Data de modificação:  12/07/2021
+    # Data de modificação:  15/07/2021
+    #Descrição: Processa mensagens recebidas do cliente, sendo possível executar as seguintes operações:
+        - TIME: Retorna para o cliente o horário do sistema
+        - DATE: Retorna para o ciente a data do sistema
+        - FILES: Retorna para o cliente a quantidade e o nome de arquivos presentes na pasta padrão.
+        - DOWN: Recebe como parâmetro o nome de um arquivo, e caso ele exista na pasta padrão, envia byte a byte para o cliente.
+        - EXIT: Notifica que o cliente desconectou do servidor. 
 '''
 
 import threading 
@@ -60,14 +66,12 @@ def programa(ip, port, con):
         if(msg_str == "FILES"):
             # todos os arquivos do diretorio
             arquivos = os.listdir(path='./server_files')
-            con.send(str(len(arquivos)).encode('utf-8'))
+            con.sendall(str(len(arquivos)).encode('utf-8'))
 
             # para cada um dos arquivos (desconsiderando as pastas), envia o nome deles
             for dir in arquivos:
-                if(len(dir.split('.')) == 2):
-                    time.sleep(0.1)
-                    con.send(dir.encode('utf-8'))
-            con.send("Alisson".encode('utf-8'))
+                print(dir)
+                con.sendall(dir.encode('utf-8'))
 
         # Baixar um arquivo do servidor
         if((msg_str.split())[0] == 'DOWN'):
@@ -85,7 +89,6 @@ def programa(ip, port, con):
                     byte = file.read(1)
 
                     while byte != b'':
-                        time.sleep(0.1)
                         con.send(byte)
                         byte = file.read(1)
             # caso não tenha o arquivo
