@@ -31,6 +31,7 @@ def recebe(ip, port):
 
 # Função principal
 def main():
+    
     idx_cliente = sys.argv[1]
     ip_cliente = sys.argv[2]
     port_cliente = sys.argv[3]
