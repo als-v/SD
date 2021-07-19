@@ -67,6 +67,7 @@ def recebeArquivo():
         for _ in range(int(quantidadeEnvio)):
             # Recebe 1024 bytes do arquivo de cada vez, recendo também o ip e a porta de quem enviou
             data, addr = sock.recvfrom(1024)
+            print(' ')
             # Concatena os 1024 bytes recebidos
             arquivo += data
 

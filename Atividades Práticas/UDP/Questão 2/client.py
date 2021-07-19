@@ -69,6 +69,7 @@ def enviaArquivo():
                     while byte != b'':
                         # Envia o arquivo, 1024 bytes de cada vez, junto com o ip e a porta
                         sock.sendto(byte, addr)
+                        print(' ')
                         # Lê os próximos 1024 bytes do arquivo
                         byte = file.read(1024)
 
