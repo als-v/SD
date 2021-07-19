@@ -49,7 +49,7 @@ def recebe(ip, port):
     while(True):
         #Recebe a mensagem (data) e o addr (contém ip e porta)
         data, addr = sock.recvfrom(1024)
-        #É realizado um decode, e realizamos um split (divisão) na mensagem onde o caracter ';' está presente
+        #É realizado um decode, e realizamos um split (divisão) na mensagem onde o caractere ';' está presente
         msg = data.decode('utf-8').split(';')
 
         #Printamos primeiro o apelido de quem enviou a mensagem, e em seguida a mensagem recebida
