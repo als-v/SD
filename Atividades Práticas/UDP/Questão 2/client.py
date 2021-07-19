@@ -72,7 +72,7 @@ def enviaArquivo():
                         print(' ')
                         # Lê os próximos 1024 bytes do arquivo
                         byte = file.read(1024)
-
+                print("\n")
                 # Recebe uma mensagem como resposta do server, contém o status do upload, assim como o ip e a porta.
                 # Essa mensagem tem tamanho de um byte
                 dataReceive, addrReceive = sock.recvfrom(1)
