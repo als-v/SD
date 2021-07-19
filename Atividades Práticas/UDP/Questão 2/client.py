@@ -46,7 +46,7 @@ def enviaArquivo():
                 md5_hash = hashlib.md5()
 
                 # Abre o arquivo desejado no modo de leitura de bytes
-                with open("./client_files/a.txt", "rb") as file:
+                with open("./client_files/" + nomeArquivo, "rb") as file:
                     # Realiza o checksum do arquivo
                     checksum = file.read()
                     md5_hash.update(checksum)
@@ -54,13 +54,14 @@ def enviaArquivo():
 
                     # Concatena o nome do arquivo, o tamano do arquivo e o checksum do arquivo que será enviado em uma só mensagem
                     msg = nomeArquivo + ';' + \
-                        str(tamanhoArquivo) + ';' + checksum + \
-                        ';' + str(quantidadeEnvio)
+                        str(tamanhoArquivo) + ';' + \
+                        checksum + ';' + \
+                        str(quantidadeEnvio)
                     # Envia a mensagem, o ip e a porta para o server, encodando a mensagem ao enviar
                     sock.sendto(msg.encode('utf-8'), addr)
 
                 # Abre novamente o arquivo
-                with open("./client_files/a.txt", "rb") as file:
+                with open("./client_files/" + nomeArquivo, "rb") as file:
                     # Lê 1024 bytes
                     byte = file.read(1024)
 
