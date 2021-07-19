@@ -3,7 +3,12 @@
     # Autores: Juan e Alisson
     # Data de criação:      15/07/2021
     # Data de modificação:  16/07/2021
-    #Descrição: 
+    #Descrição: Neste sistema o cliente pode realizar uploads de arquivos via UDP para um servidor.
+        Esses arquivo devem estar presentes na pasta padrão do cliente para que seja possível realizar o upload, 
+        enviando como mensagem o nome do arquivo, tamanho do arquivo, a quantidade de vezes que o envio será realizado, 
+        já que são enviados 1024 bytes de cada vez, e o checksum, para que seja possível verificar a integridade do arquivo
+        recebido pelo server. Por fim o cliente recebe uma mensagem de resposta contendo 1 caso o upload tenha ocorrido com sucesso, 
+        ou 2 caso tenha ocorrido algum problema com o upload.
 '''
 
 import socket

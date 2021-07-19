@@ -3,7 +3,11 @@
     # Autores: Juan e Alisson
     # Data de criação:      15/07/2021
     # Data de modificação:  16/07/2021
-    #Descrição: 
+    #Descrição: Neste istema o servidor recebe arquivos, mais expecificamente 1024 bytes de cada vez. O server recebe
+        uma mensagem contendo o nome do arquivo, tamanho do arquivo, a quantidade de vezes que o envio será realizado, 
+        já que são enviados 1024 bytes de cada vez, concatenando esses bytes recebidos em um arquivo único, e o checksum
+        para que seja possível verificar a integridade do arquivo recebido do cliente, enviando uma mensagem de resposta contendo
+        1 caso o checksum do arquivo recebido seja igual ao enviado pelo cliente, ou 2 caso ocorra alguma problema com o upload.
 '''
 
 import socket
