@@ -98,9 +98,11 @@ public class ProtocolController {
     }
 
     public void join() throws IOException {
+        multicastSocket.joinGroup(group);
     }
 
     public void leave() throws IOException {
+        multicastSocket.leaveGroup(group);
     }
     
     public void close() throws IOException {
@@ -109,11 +111,59 @@ public class ProtocolController {
     }
 
     public void processPacket(DatagramPacket p) throws IOException {
+        Message message = new Message(p.getData());
+
+        /* Obtem o apelido de quem enviou a mensagem */
+        String senderNick = message.getSource();   
+
+        if (message.getType() == 1) {
+            if(nick.equals(senderNick) == false) {
+                /* Salva o apelido e endereço na lista de usuários ativos */
+                onlineUsers.put(senderNick, p.getAddress());
+                /* Envia JOINACK */
+                send(senderNick, "JOINACK");
+            }
+        } else if (message.getType() == 2) {
+            /* Salva o apelido e endereço na lista de suários ativos */
+            onlineUsers.put(senderNick, p.getAddress());
+        } else if (message.getType() == 5) {
+            /* remove o apelido e endereço da lista de suários ativos */
+            onlineUsers.remove(senderNick);
+        }
+
+        /* Atualiza UI */
+        ui.update(message);
     }
 
-    public void receiveMulticastPacket() throws IOException {
+    public void receiveMulticastPacket() throws IOException {   
+        /* Recebe a segunda mensagem */
+        byte[] buffer = new byte[1];
+        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        multicastSocket.receive(messageIn);
+
+        byte[] msgBytes = messageIn.getData();
+        String msgString = new String(msgBytes);
+        int tamanho = Integer.valueOf(msgString.trim());
+
+        /* Recebe a terceira mensagem */
+        buffer = new byte[tamanho];
+        messageIn = new DatagramPacket(buffer, buffer.length);
+        multicastSocket.receive(messageIn);
     }
 
     public void receiveUdpPacket() throws IOException {
+        /* Recebe a segunda mensagem */
+        byte[] buffer = new byte[1];
+        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        multicastSocket.receive(messageIn);
+
+        byte[] msgBytes = messageIn.getData();
+        String msgString = new String(msgBytes);
+        int tamanho = Integer.valueOf(msgString.trim());
+
+        /* Recebe a terceira mensagem */
+        buffer = new byte[tamanho];
+        messageIn = new DatagramPacket(buffer, buffer.length);
+        multicastSocket.receive(messageIn);
     }
 }
