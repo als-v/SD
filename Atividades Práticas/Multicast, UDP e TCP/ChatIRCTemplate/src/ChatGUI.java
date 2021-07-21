@@ -7,6 +7,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.net.*;
 import java.util.*;
 import javax.swing.DefaultListModel;
@@ -162,7 +164,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
         pnlOpcoes.add(txtPorta, gridBagConstraints);
 
         txtApelido.setColumns(10);
-        txtApelido.setText("campiolo");
+        txtApelido.setText("um nick legal");
         txtApelido.setMinimumSize(new java.awt.Dimension(114, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -248,7 +250,8 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             listener = new Listener(protoController);
 
             /* juntar-se ao grupo e inicializar o recebimento de mensagens */
-            //TODO
+            protoController.join();
+            listener.start();
 
         } catch (UnknownHostException uhe) {
              JOptionPane.showMessageDialog(this,
@@ -270,6 +273,9 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             protoController.close();
             protoController = null;
         } 
+
+        protoController.leave();
+        listener.interrupt();
         
         } catch (IOException ioe) {
              JOptionPane.showMessageDialog(this, ioe.getMessage(),
@@ -296,7 +302,12 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             String nickTarget = (String)lstLista.getSelectedValue();
 
             /** Implementar o enviar para o grupo ou individuo HERE */
-                //TODO
+            try {
+                protoController.send(nickTarget, msg);
+            } catch (IOException ex) {
+                System.out.println (ex.toString());
+                Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             /* atualiza a interface */
             this.writeLocalMessage(this.getApelido(), msg);

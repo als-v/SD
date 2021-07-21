@@ -39,6 +39,12 @@ public class ProtocolController {
         Byte type;
         Message message = null;
 
+        System.out.println("=== SEND ===");
+        System.out.println("targetUSer:");
+        System.out.println(targetUser);
+        System.out.println("msg:");
+        System.out.println(msg);
+
         // verifica se a mensagem é para todos ou se é 'privada'
         if(targetUser.equals("Todos")){
             if(msg.equals("JOIN")){
@@ -53,7 +59,7 @@ public class ProtocolController {
             }
 
             message = new Message(type, this.nick, msg);
-            sendMessageGroup(message, this.nick);
+            sendMessageGroup(message);
 
         } else {
             if(msg.equals("JOINAK")){
@@ -70,39 +76,56 @@ public class ProtocolController {
         }
     }
 
-    private void sendMessageGroup(Message msg, String nick) throws IOException {
+    private void sendMessageGroup(Message msg) throws IOException {
         byte [] m = msg.getBytes();
 
+        System.out.println("=== SENDMESSAGEGROUP ===");
+        System.out.println("msg");
+        System.out.println(msg);
+
         /* Envia o tamanho da mensagem */
-        String tamMsg = Integer.toString(m.length);
-        DatagramPacket messageOut = new DatagramPacket(tamMsg.getBytes(), tamMsg.getBytes().length, group, mport);
-        udpSocket.send(messageOut);
+        DatagramPacket messageOut = new DatagramPacket(m, m.length, group, mport);
+        multicastSocket.send(messageOut);
 
-        /* Envia a mensagem */
-        messageOut = new DatagramPacket(m, m.length, group, mport);
-        udpSocket.send(messageOut);
-
+        System.out.println("messageOut");
     }
 
     private void sendMessage(Message msg, InetAddress target) throws IOException {
         byte [] m = msg.getBytes();
 
-        /* Envia o tamanho da mensagem */
-        String tamMsg = Integer.toString(m.length);
-        DatagramPacket messageOut = new DatagramPacket(tamMsg.getBytes(), tamMsg.getBytes().length, target, uport);
-        udpSocket.send(messageOut);
-
+        System.out.println("=== SENDMESSAGE ===");
+        System.out.println("msg");
+        System.out.println(msg);
+        
         /* Envia a mensagem */
-        messageOut = new DatagramPacket(m, m.length, target, uport);
+        DatagramPacket messageOut = new DatagramPacket(m, m.length, target, uport);
         udpSocket.send(messageOut);
+        
+        System.out.println("messageOut");
+        System.out.println(messageOut);
+        
     }
-
+    
     public void join() throws IOException {
+        System.out.println("=== JOIN ===");
         multicastSocket.joinGroup(group);
-    }
 
+        Byte type = 1;
+        Message message = new Message(type, this.nick, "");
+
+        this.sendMessageGroup(message);
+    }
+    
     public void leave() throws IOException {
+        System.out.println("=== LEAVE ===");
         multicastSocket.leaveGroup(group);
+        
+        Byte type = 5;
+        Message message = new Message(type, this.nick, "");
+        this.sendMessageGroup(message);
+        
+        multicastSocket.leaveGroup(group);
+        close();
     }
     
     public void close() throws IOException {
@@ -115,6 +138,11 @@ public class ProtocolController {
 
         /* Obtem o apelido de quem enviou a mensagem */
         String senderNick = message.getSource();   
+
+        System.out.println("Mensagem: ");
+        System.out.println(message);
+        System.out.println("DatagramPacket: ");
+        System.out.println(p);
 
         if (message.getType() == 1) {
             if(nick.equals(senderNick) == false) {
@@ -136,34 +164,42 @@ public class ProtocolController {
     }
 
     public void receiveMulticastPacket() throws IOException {   
-        /* Recebe a segunda mensagem */
-        byte[] buffer = new byte[1];
-        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-        multicastSocket.receive(messageIn);
+        // /* Recebe a segunda mensagem */
+        // byte[] buffer = new byte[1];
+        // DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        // multicastSocket.receive(messageIn);
 
-        byte[] msgBytes = messageIn.getData();
-        String msgString = new String(msgBytes);
-        int tamanho = Integer.valueOf(msgString.trim());
+        // byte[] msgBytes = messageIn.getData();
+        // String msgString = new String(msgBytes);
+        // int tamanho = Integer.valueOf(msgString.trim());
 
-        /* Recebe a terceira mensagem */
-        buffer = new byte[tamanho];
-        messageIn = new DatagramPacket(buffer, buffer.length);
-        multicastSocket.receive(messageIn);
+        // /* Recebe a terceira mensagem */
+        // buffer = new byte[tamanho];
+        // messageIn = new DatagramPacket(buffer, buffer.length);
+        // multicastSocket.receive(messageIn);
+        DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
+        this.multicastSocket.receive(packet);
+
+        this.processPacket(packet);
     }
 
     public void receiveUdpPacket() throws IOException {
-        /* Recebe a segunda mensagem */
-        byte[] buffer = new byte[1];
-        DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
-        multicastSocket.receive(messageIn);
+        // /* Recebe a segunda mensagem */
+        // byte[] buffer = new byte[1];
+        // DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+        // multicastSocket.receive(messageIn);
 
-        byte[] msgBytes = messageIn.getData();
-        String msgString = new String(msgBytes);
-        int tamanho = Integer.valueOf(msgString.trim());
+        // byte[] msgBytes = messageIn.getData();
+        // String msgString = new String(msgBytes);
+        // int tamanho = Integer.valueOf(msgString.trim());
 
-        /* Recebe a terceira mensagem */
-        buffer = new byte[tamanho];
-        messageIn = new DatagramPacket(buffer, buffer.length);
-        multicastSocket.receive(messageIn);
+        // /* Recebe a terceira mensagem */
+        // buffer = new byte[tamanho];
+        // messageIn = new DatagramPacket(buffer, buffer.length);
+        // multicastSocket.receive(messageIn);
+        DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
+        this.udpSocket.receive(packet);
+        
+        this.processPacket(packet);  
     }
 }
