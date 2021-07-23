@@ -20,6 +20,7 @@ public class ProtocolController {
     private final String nick;
     private final HashMap<String, InetAddress> onlineUsers;
     private final UIControl ui;
+    private final InetAddress ipAddr;
 
     public ProtocolController(Properties properties) throws IOException {
         mport = (Integer) properties.get("multicastPort");
@@ -35,6 +36,10 @@ public class ProtocolController {
         
         onlineUsers = new HashMap<>();
         onlineUsers.put("Todos", group);  
+
+        DatagramSocket socket = new DatagramSocket();
+        socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+        ipAddr = socket.getLocalAddress();
     }
 
     public void send(String targetUser, String msg) throws IOException {
@@ -145,24 +150,56 @@ public class ProtocolController {
         System.out.println(message);
         System.out.println("DatagramPacket: ");
         System.out.println(p);
-
-        if (message.getType() == 1) {
-            if(nick.equals(senderNick) == false) {
-                /* Salva o apelido e endereço na lista de usuários ativos */
+        
+        switch(message.getType()){
+            case 1:
+                this.ui.update(message);
                 onlineUsers.put(senderNick, p.getAddress());
-                /* Envia JOINACK */
-                send(senderNick, "JOINACK");
-            }
-        } else if (message.getType() == 2) {
-            /* Salva o apelido e endereço na lista de suários ativos */
-            onlineUsers.put(senderNick, p.getAddress());
-        } else if (message.getType() == 5) {
-            /* remove o apelido e endereço da lista de suários ativos */
-            onlineUsers.remove(senderNick);
+
+                if(nick.equals(senderNick) == false){
+                    Message joinAck = new Message((byte) 0x02, this.nick, "");
+                    this.sendMessage(joinAck, p.getAddress());
+                }
+
+                break;
+            
+            case 2:
+                ui.update(message);
+                onlineUsers.put(senderNick, p.getAddress());
+                break;
+            
+            case 3:
+            case 4:
+                if(p.getAddress().equals(this.ipAddr)){
+                    this.ui.update(message);
+                }
+
+                break;
+            
+            case 5:
+                this.ui.update(message);
+                onlineUsers.remove(senderNick);
+
+                break;
         }
 
-        /* Atualiza UI */
-        ui.update(message);
+        // if (message.getType() == 1) {
+        //     if(nick.equals(senderNick) == false) {
+        //         /* Salva o apelido e endereço na lista de usuários ativos */
+        //         onlineUsers.put(senderNick, p.getAddress());
+        //         /* Envia JOINACK */
+        //         send(senderNick, "JOINACK");
+        //     }
+        // } else if (message.getType() == 2) {
+        //     /* Salva o apelido e endereço na lista de suários ativos */
+        //     onlineUsers.put(senderNick, p.getAddress());
+        // } else if (message.getType() == 5) {
+        //     /* remove o apelido e endereço da lista de suários ativos */
+        //     onlineUsers.remove(senderNick);
+        // }
+
+        // /* Atualiza UI */
+        // ui.update(message);
     }
 
     public void receiveMulticastPacket() throws IOException {   
