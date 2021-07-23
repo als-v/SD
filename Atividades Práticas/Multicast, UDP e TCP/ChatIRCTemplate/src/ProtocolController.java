@@ -120,7 +120,6 @@ public class ProtocolController {
     
     public void leave() throws IOException {
         System.out.println("=== LEAVE ===");
-        multicastSocket.leaveGroup(group);
         
         Byte type = 5;
         Message message = new Message(type, this.nick, "");

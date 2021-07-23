@@ -278,9 +278,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             protoController.close();
             protoController = null;
         } 
-
-        protoController.leave();
-        listener.interrupt();
         
         } catch (IOException ioe) {
              JOptionPane.showMessageDialog(this, ioe.getMessage(),
