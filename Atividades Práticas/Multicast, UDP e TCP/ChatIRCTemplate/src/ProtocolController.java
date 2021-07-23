@@ -29,6 +29,8 @@ public class ProtocolController {
         ui = (UIControl) properties.get("UI");
 
         multicastSocket = new MulticastSocket(mport);
+        multicastSocket.setReuseAddress(true);
+        
         udpSocket = new DatagramSocket(uport);
         
         onlineUsers = new HashMap<>();
