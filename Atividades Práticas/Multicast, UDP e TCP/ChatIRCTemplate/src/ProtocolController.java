@@ -9,6 +9,7 @@ import java.util.Properties;
 
 /**
  * Gerencia o protocolo e o processamento das mensagens
+ * 
  * @author rodrigo
  */
 public class ProtocolController {
@@ -20,7 +21,6 @@ public class ProtocolController {
     private final String nick;
     private final HashMap<String, InetAddress> onlineUsers;
     private final UIControl ui;
-    private final InetAddress ipAddr;
 
     public ProtocolController(Properties properties) throws IOException {
         mport = (Integer) properties.get("multicastPort");
@@ -31,15 +31,11 @@ public class ProtocolController {
 
         multicastSocket = new MulticastSocket(mport);
         multicastSocket.setReuseAddress(true);
-        
-        udpSocket = new DatagramSocket(uport);
-        
-        onlineUsers = new HashMap<>();
-        onlineUsers.put("Todos", group);  
 
-        DatagramSocket socket = new DatagramSocket();
-        socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-        ipAddr = socket.getLocalAddress();
+        udpSocket = new DatagramSocket(uport);
+
+        onlineUsers = new HashMap<>();
+        onlineUsers.put("Todos", group);
     }
 
     public void send(String targetUser, String msg) throws IOException {
@@ -53,11 +49,11 @@ public class ProtocolController {
         System.out.println(msg);
 
         // verifica se a mensagem é para todos ou se é 'privada'
-        if(targetUser.equals("Todos")){
-            if(msg.equals("JOIN")){
+        if (targetUser.equals("Todos")) {
+            if (msg.equals("JOIN")) {
                 // JOIN: junta ao grupo todos
                 type = 1;
-            } else if(msg.equals("LEAVE")){
+            } else if (msg.equals("LEAVE")) {
                 // LEAVE: deixa o grupo
                 type = 5;
             } else {
@@ -69,22 +65,22 @@ public class ProtocolController {
             sendMessageGroup(message);
 
         } else {
-            if(msg.equals("JOINAK")){
+            if (msg.equals("JOINAK")) {
                 // JOINAK: resposta ao join
                 type = 2;
             } else {
                 // MSGIDV: msg enviado 'privada'
                 type = 4;
             }
-        
+
             message = new Message(type, this.nick, msg);
             sendMessage(message, onlineUsers.get(targetUser));
-        
+
         }
     }
 
     private void sendMessageGroup(Message msg) throws IOException {
-        byte [] m = msg.getBytes();
+        byte[] m = msg.getBytes();
 
         System.out.println("=== SENDMESSAGEGROUP ===");
         System.out.println("msg");
@@ -98,110 +94,80 @@ public class ProtocolController {
     }
 
     private void sendMessage(Message msg, InetAddress target) throws IOException {
-        byte [] m = msg.getBytes();
+        byte[] m = msg.getBytes();
 
         System.out.println("=== SENDMESSAGE ===");
         System.out.println("msg");
         System.out.println(msg);
-        
+
         /* Envia a mensagem */
         DatagramPacket messageOut = new DatagramPacket(m, m.length, target, uport);
         udpSocket.send(messageOut);
-        
+
         System.out.println("messageOut");
         System.out.println(messageOut);
-        
+
     }
-    
+
     public void join() throws IOException {
         System.out.println("=== JOIN ===");
-        multicastSocket.joinGroup(group);
+        this.multicastSocket.joinGroup(group);
 
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
 
         this.sendMessageGroup(message);
     }
-    
+
     public void leave() throws IOException {
         System.out.println("=== LEAVE ===");
-        
+
         Byte type = 5;
         Message message = new Message(type, this.nick, "");
         this.sendMessageGroup(message);
-        
+
         multicastSocket.leaveGroup(group);
         close();
     }
-    
+
     public void close() throws IOException {
-        if (udpSocket != null) udpSocket.close();
-        if (multicastSocket != null) multicastSocket.close();
+        if (udpSocket != null)
+            udpSocket.close();
+        if (multicastSocket != null)
+            multicastSocket.close();
     }
 
     public void processPacket(DatagramPacket p) throws IOException {
         Message message = new Message(p.getData());
 
         /* Obtem o apelido de quem enviou a mensagem */
-        String senderNick = message.getSource();   
+        String senderNick = message.getSource();
 
         System.out.println("Mensagem: ");
         System.out.println(message);
         System.out.println("DatagramPacket: ");
         System.out.println(p);
-        
-        switch(message.getType()){
-            case 1:
-                this.ui.update(message);
+
+        if (message.getType() == 1) {
+            if (nick.equals(senderNick) == false) {
+                /* Salva o apelido e endereço na lista de usuários ativos */
                 onlineUsers.put(senderNick, p.getAddress());
-
-                if(nick.equals(senderNick) == false){
-                    Message joinAck = new Message((byte) 0x02, this.nick, "");
-                    this.sendMessage(joinAck, p.getAddress());
-                }
-
-                break;
-            
-            case 2:
-                ui.update(message);
-                onlineUsers.put(senderNick, p.getAddress());
-                break;
-            
-            case 3:
-            case 4:
-                if(p.getAddress().equals(this.ipAddr)){
-                    this.ui.update(message);
-                }
-
-                break;
-            
-            case 5:
-                this.ui.update(message);
-                onlineUsers.remove(senderNick);
-
-                break;
+                /* Envia JOINACK */
+                send(senderNick, "JOINACK");
+            }
+        } else if (message.getType() == 2) {
+            /* Salva o apelido e endereço na lista de suários ativos */
+            onlineUsers.put(senderNick, p.getAddress());
+        } else if (message.getType() == 5) {
+            /* remove o apelido e endereço da lista de suários ativos */
+            onlineUsers.remove(senderNick);
         }
 
-        // if (message.getType() == 1) {
-        //     if(nick.equals(senderNick) == false) {
-        //         /* Salva o apelido e endereço na lista de usuários ativos */
-        //         onlineUsers.put(senderNick, p.getAddress());
-        //         /* Envia JOINACK */
-        //         send(senderNick, "JOINACK");
-        //     }
-        // } else if (message.getType() == 2) {
-        //     /* Salva o apelido e endereço na lista de suários ativos */
-        //     onlineUsers.put(senderNick, p.getAddress());
-        // } else if (message.getType() == 5) {
-        //     /* remove o apelido e endereço da lista de suários ativos */
-        //     onlineUsers.remove(senderNick);
-        // }
-
-        // /* Atualiza UI */
-        // ui.update(message);
+        /* Atualiza UI */
+        ui.update(message);
     }
 
-    public void receiveMulticastPacket() throws IOException {   
+    public void receiveMulticastPacket() throws IOException {
         // /* Recebe a segunda mensagem */
         // byte[] buffer = new byte[1];
         // DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
@@ -237,7 +203,7 @@ public class ProtocolController {
         // multicastSocket.receive(messageIn);
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         this.udpSocket.receive(packet);
-        
-        this.processPacket(packet);  
+
+        this.processPacket(packet);
     }
 }
