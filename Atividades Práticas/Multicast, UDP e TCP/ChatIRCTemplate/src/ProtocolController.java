@@ -50,6 +50,7 @@ public class ProtocolController {
         // verifica se a mensagem é para todos ou se é 'privada'
         if (targetUser.equals("Todos")) {
             if (msg.equals("JOIN")) {
+                System.out.println("JOIN");
                 // JOIN: junta ao grupo todos
                 type = 1;
             } else if (msg.equals("LEAVE")) {
@@ -59,12 +60,13 @@ public class ProtocolController {
                 // MSG: manda mensagem para todos
                 type = 3;
             }
-
+            
             message = new Message(type, this.nick, msg);
             sendMessageGroup(message);
-
+            
         } else {
-            if (msg.equals("JOINAK")) {
+            if (msg.equals("JOINACK")) {
+                System.out.println("Resposta ao joinak");
                 // JOINAK: resposta ao join
                 type = 2;
             } else {
@@ -124,6 +126,8 @@ public class ProtocolController {
 
         /* Obtem o apelido de quem enviou a mensagem */
         String senderNick = message.getSource();
+        System.out.println("msg: ");
+        System.out.println(message);
 
         if (message.getType() == 1) {
             if(nick.equals(senderNick) == false) {
