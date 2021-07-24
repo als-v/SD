@@ -146,7 +146,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
         pnlOpcoes.add(lblApelido, gridBagConstraints);
 
         txtIP.setColumns(10);
-        txtIP.setText("225.1.2.3");
+        txtIP.setText("230.1.1.1");
         txtIP.setMinimumSize(new java.awt.Dimension(124, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -228,6 +228,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
 
     /** Entrar no grupo (JButton) **/
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
+        System.out.println("Entrou aqui");
         try {
             modelList.addElement("Todos");
 
@@ -237,7 +238,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             txtIP.setEnabled(false);
             txtPorta.setEnabled(false);
             btnDesconectar.setEnabled(true);  //LEAVE
-
+            
             /**  implementa o entrar no grupo */
             Properties prop = new Properties();
             prop.put("multicastIP", InetAddress.getByName(txtIP.getText()));
@@ -246,17 +247,21 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             prop.put("nickname", this.getApelido());
             prop.put("UI", this);
             
+            System.out.println("prop: ");
+            System.out.println(prop);
             protoController = new ProtocolController(prop);
             listener = new Listener(protoController);
 
             /* juntar-se ao grupo e inicializar o recebimento de mensagens */
             protoController.join();
             listener.start();
-
+            
         } catch (UnknownHostException uhe) {
              JOptionPane.showMessageDialog(this,
                     uhe.getMessage(),"Erro ao entrar no grupo.",JOptionPane.ERROR_MESSAGE);
         } catch (IOException ioe) {
+            System.out.println("olha a caca: ");
+            System.out.println(ioe);
              JOptionPane.showMessageDialog(this,
                     ioe.getMessage(), "Erro de I/O.",JOptionPane.ERROR_MESSAGE);
         }
@@ -273,9 +278,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             protoController.close();
             protoController = null;
         } 
-
-        protoController.leave();
-        listener.interrupt();
         
         } catch (IOException ioe) {
              JOptionPane.showMessageDialog(this, ioe.getMessage(),
