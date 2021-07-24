@@ -242,7 +242,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             Properties prop = new Properties();
             prop.put("multicastIP", InetAddress.getByName(txtIP.getText()));
             prop.put("multicastPort", Integer.parseInt(txtPorta.getText()));
-            prop.put("udpPort", 9967);
+            prop.put("udpPort", 6799);
             prop.put("nickname", this.getApelido());
             prop.put("UI", this);
             
