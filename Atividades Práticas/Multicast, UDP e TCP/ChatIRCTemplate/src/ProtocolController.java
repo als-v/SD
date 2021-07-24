@@ -31,6 +31,15 @@ public class ProtocolController {
 
         this.multicastSocket = new MulticastSocket(mport);
 
+        System.out.println("multicastSocket");
+        System.out.println(this.multicastSocket.getInetAddress());
+        System.out.println(this.multicastSocket.getLocalPort());
+        System.out.println(this.multicastSocket.getChannel());
+        System.out.println(this.multicastSocket.getLocalAddress());
+        System.out.println(this.multicastSocket.getLocalSocketAddress());
+        System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        System.out.println(this.multicastSocket.getNetworkInterface());
+
         this.udpSocket = new DatagramSocket(uport);
 
         this.onlineUsers = new HashMap<>();
@@ -90,6 +99,15 @@ public class ProtocolController {
 
     public void join() throws IOException {
         this.multicastSocket.joinGroup(group);
+        
+        System.out.println("joinGroup");
+        System.out.println(this.multicastSocket.getInetAddress());
+        System.out.println(this.multicastSocket.getLocalPort());
+        System.out.println(this.multicastSocket.getChannel());
+        System.out.println(this.multicastSocket.getLocalAddress());
+        System.out.println(this.multicastSocket.getLocalSocketAddress());
+        System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        System.out.println(this.multicastSocket.getNetworkInterface());
 
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
@@ -158,14 +176,6 @@ public class ProtocolController {
         // multicastSocket.receive(messageIn);
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         this.multicastSocket.receive(packet);
-        System.out.println("multicastSocket");
-        System.out.println(this.multicastSocket.getInetAddress());
-        System.out.println(this.multicastSocket.getLocalPort());
-        System.out.println(this.multicastSocket.getChannel());
-        System.out.println(this.multicastSocket.getLocalAddress());
-        System.out.println(this.multicastSocket.getLocalSocketAddress());
-        System.out.println(this.multicastSocket.getRemoteSocketAddress());
-        System.out.println(this.multicastSocket.getNetworkInterface());
         this.processPacket(packet);
     }
 
