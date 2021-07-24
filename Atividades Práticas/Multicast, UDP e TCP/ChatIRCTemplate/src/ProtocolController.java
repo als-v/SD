@@ -87,48 +87,49 @@ public class ProtocolController {
         DatagramPacket messageOut = new DatagramPacket(m, m.length, group, mport);
         this.multicastSocket.send(messageOut);
     }
-
+    
     private void sendMessage(Message msg, InetAddress target) throws IOException {
         byte[] m = msg.getBytes();
-
+        
         /* Envia a mensagem */
         DatagramPacket messageOut = new DatagramPacket(m, m.length, target, uport);
         udpSocket.send(messageOut);
     }
-
+    
     public void join() throws IOException {
         this.multicastSocket.joinGroup(group);
-
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
-
+        
         this.sendMessageGroup(message);
     }
-
+    
     public void leave() throws IOException {
         Byte type = 5;
         Message message = new Message(type, this.nick, "");
         this.sendMessageGroup(message);
-
+        
         this.multicastSocket.leaveGroup(group);
         close();
     }
-
+    
     public void close() throws IOException {
         if (udpSocket != null)
-            udpSocket.close();
+        udpSocket.close();
         if (multicastSocket != null)
             this.multicastSocket.close();
-    }
-
+        }
+        
     public void processPacket(DatagramPacket p) throws IOException {
         Message message = new Message(p.getData());
-
+        System.out.println("process()");
+        System.out.println(message);
+        
         /* Obtem o apelido de quem enviou a mensagem */
         String senderNick = message.getSource();
         System.out.println("msg: ");
         System.out.println(message);
-
+        
         if (message.getType() == 1) {
             if(nick.equals(senderNick) == false) {
                 /* Salva o apelido e endereço na lista de usuários ativos */
