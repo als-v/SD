@@ -21,7 +21,6 @@ public class ProtocolController {
     private final String nick;
     private final HashMap<String, InetAddress> onlineUsers;
     private final UIControl ui;
-    private final InetAddress ipAddr;
 
     public ProtocolController(Properties properties) throws IOException {
         mport = (Integer) properties.get("multicastPort");
@@ -30,17 +29,12 @@ public class ProtocolController {
         nick = (String) properties.get("nickname");
         ui = (UIControl) properties.get("UI");
 
-        multicastSocket = new MulticastSocket(mport);
-        multicastSocket.setReuseAddress(true);
+        this.multicastSocket = new MulticastSocket(mport);
 
-        udpSocket = new DatagramSocket(uport);
+        this.udpSocket = new DatagramSocket(uport);
 
-        onlineUsers = new HashMap<>();
-        onlineUsers.put("Todos", group);
-
-        DatagramSocket socket = new DatagramSocket();
-        socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-        ipAddr = socket.getLocalAddress();
+        this.onlineUsers = new HashMap<>();
+        this.onlineUsers.put("Todos", group);
     }
 
     public void send(String targetUser, String msg) throws IOException {
@@ -165,7 +159,13 @@ public class ProtocolController {
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         this.multicastSocket.receive(packet);
         System.out.println("multicastSocket");
-        System.out.println(this.multicastSocket);
+        System.out.println(this.multicastSocket.getInetAddress());
+        System.out.println(this.multicastSocket.getLocalPort());
+        System.out.println(this.multicastSocket.getChannel());
+        System.out.println(this.multicastSocket.getLocalAddress());
+        System.out.println(this.multicastSocket.getLocalSocketAddress());
+        System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        System.out.println(this.multicastSocket.getNetworkInterface());
         this.processPacket(packet);
     }
 
