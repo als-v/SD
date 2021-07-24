@@ -162,10 +162,10 @@ public class ProtocolController {
         // buffer = new byte[tamanho];
         // messageIn = new DatagramPacket(buffer, buffer.length);
         // multicastSocket.receive(messageIn);
-        System.out.println("receiveMulticastPAcket()");
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         this.multicastSocket.receive(packet);
-
+        System.out.println("multicastSocket");
+        System.out.println(this.multicastSocket);
         this.processPacket(packet);
     }
 
