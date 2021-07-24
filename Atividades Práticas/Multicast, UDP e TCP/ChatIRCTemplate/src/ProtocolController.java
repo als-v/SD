@@ -71,11 +71,11 @@ public class ProtocolController {
                 // MSGIDV: msg enviado 'privada'
                 type = 4;
             }
-
             message = new Message(type, this.nick, msg);
             sendMessage(message, onlineUsers.get(targetUser));
 
         }
+
     }
 
     private void sendMessageGroup(Message msg) throws IOException {
@@ -125,55 +125,25 @@ public class ProtocolController {
         /* Obtem o apelido de quem enviou a mensagem */
         String senderNick = message.getSource();
 
-        switch(message.getType()){
-            case 1:
-                this.ui.update(message);
-                onlineUsers.put(senderNick, p.getAddress());
-
-                if(nick.equals(senderNick) == false){
-                    Message joinAck = new Message((byte) 0x02, this.nick, "");
-                    this.sendMessage(joinAck, p.getAddress());
-                }
-
-                break;
-
-            case 2:
-                ui.update(message);
-                onlineUsers.put(senderNick, p.getAddress());
-                break;
-
-            case 3:
-            case 4:
-                if(p.getAddress().equals(this.ipAddr)){
-                    this.ui.update(message);
-                }
-
-                break;
-
-            case 5:
-                this.ui.update(message);
-                onlineUsers.remove(senderNick);
-
-                break;
+        if (message.getType() == 1) {
+            if(nick.equals(senderNick) == false) {
+                /* Salva o apelido e endereço na lista de usuários ativos */
+                this.onlineUsers.put(senderNick, p.getAddress());
+                /* Envia JOINACK */
+                send(senderNick, "JOINACK");
+            }
+        } else if (message.getType() == 2) {
+            /* Salva o apelido e endereço na lista de suários ativos */
+            this.onlineUsers.put(senderNick, p.getAddress());
+        } else if (message.getType() == 5) {
+            /* remove o apelido e endereço da lista de suários ativos */
+            this.onlineUsers.remove(senderNick);
         }
 
-        // if (message.getType() == 1) {
-        //     if(nick.equals(senderNick) == false) {
-        //         /* Salva o apelido e endereço na lista de usuários ativos */
-        //         onlineUsers.put(senderNick, p.getAddress());
-        //         /* Envia JOINACK */
-        //         send(senderNick, "JOINACK");
-        //     }
-        // } else if (message.getType() == 2) {
-        //     /* Salva o apelido e endereço na lista de suários ativos */
-        //     onlineUsers.put(senderNick, p.getAddress());
-        // } else if (message.getType() == 5) {
-        //     /* remove o apelido e endereço da lista de suários ativos */
-        //     onlineUsers.remove(senderNick);
-        // }
-
-        // /* Atualiza UI */
-        // ui.update(message);
+        System.out.println("ONLINE: ");
+        System.out.println(this.onlineUsers);
+        /* Atualiza UI */
+        ui.update(message);
     }
 
     public void receiveMulticastPacket() throws IOException {
