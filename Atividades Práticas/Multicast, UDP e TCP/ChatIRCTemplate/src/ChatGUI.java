@@ -228,7 +228,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
 
     /** Entrar no grupo (JButton) **/
     private void btnConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConectarActionPerformed
-        System.out.println("Entrou aqui");
         try {
             modelList.addElement("Todos");
 
@@ -247,8 +246,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             prop.put("nickname", this.getApelido());
             prop.put("UI", this);
             
-            System.out.println("prop: ");
-            System.out.println(prop);
             protoController = new ProtocolController(prop);
             listener = new Listener(protoController);
 
@@ -260,8 +257,6 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
              JOptionPane.showMessageDialog(this,
                     uhe.getMessage(),"Erro ao entrar no grupo.",JOptionPane.ERROR_MESSAGE);
         } catch (IOException ioe) {
-            System.out.println("olha a caca: ");
-            System.out.println(ioe);
              JOptionPane.showMessageDialog(this,
                     ioe.getMessage(), "Erro de I/O.",JOptionPane.ERROR_MESSAGE);
         }

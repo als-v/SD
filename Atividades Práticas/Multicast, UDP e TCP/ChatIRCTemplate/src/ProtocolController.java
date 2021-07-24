@@ -50,7 +50,6 @@ public class ProtocolController {
         // verifica se a mensagem é para todos ou se é 'privada'
         if (targetUser.equals("Todos")) {
             if (msg.equals("JOIN")) {
-                System.out.println("JOIN");
                 // JOIN: junta ao grupo todos
                 type = 1;
             } else if (msg.equals("LEAVE")) {
@@ -66,7 +65,6 @@ public class ProtocolController {
             
         } else {
             if (msg.equals("JOINACK")) {
-                System.out.println("Resposta ao joinak");
                 // JOINAK: resposta ao join
                 type = 2;
             } else {
@@ -126,13 +124,15 @@ public class ProtocolController {
 
         /* Obtem o apelido de quem enviou a mensagem */
         String senderNick = message.getSource();
-        System.out.println("msg: ");
+        System.out.println("Processamento pacotes: ");
+        System.out.println(p);
         System.out.println(message);
 
         if (message.getType() == 1) {
             if(nick.equals(senderNick) == false) {
                 /* Salva o apelido e endereço na lista de usuários ativos */
                 this.onlineUsers.put(senderNick, p.getAddress());
+                System.out.println("JOINACK ENVIADO");
                 /* Envia JOINACK */
                 send(senderNick, "JOINACK");
             }
@@ -144,8 +144,6 @@ public class ProtocolController {
             this.onlineUsers.remove(senderNick);
         }
 
-        System.out.println("ONLINE: ");
-        System.out.println(this.onlineUsers);
         /* Atualiza UI */
         ui.update(message);
     }
