@@ -42,12 +42,6 @@ public class ProtocolController {
         Byte type;
         Message message = null;
 
-        System.out.println("=== SEND ===");
-        System.out.println("targetUSer:");
-        System.out.println(targetUser);
-        System.out.println("msg:");
-        System.out.println(msg);
-
         // verifica se a mensagem é para todos ou se é 'privada'
         if (targetUser.equals("Todos")) {
             if (msg.equals("JOIN")) {
@@ -88,7 +82,7 @@ public class ProtocolController {
 
         /* Envia o tamanho da mensagem */
         DatagramPacket messageOut = new DatagramPacket(m, m.length, group, mport);
-        multicastSocket.send(messageOut);
+        this.multicastSocket.send(messageOut);
 
         System.out.println("messageOut");
     }
@@ -126,7 +120,7 @@ public class ProtocolController {
         Message message = new Message(type, this.nick, "");
         this.sendMessageGroup(message);
 
-        multicastSocket.leaveGroup(group);
+        this.multicastSocket.leaveGroup(group);
         close();
     }
 
@@ -134,7 +128,7 @@ public class ProtocolController {
         if (udpSocket != null)
             udpSocket.close();
         if (multicastSocket != null)
-            multicastSocket.close();
+            this.multicastSocket.close();
     }
 
     public void processPacket(DatagramPacket p) throws IOException {
