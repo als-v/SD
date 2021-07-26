@@ -2,3 +2,4 @@
 *.class
 *.jar
 *.db
+/__pycache__

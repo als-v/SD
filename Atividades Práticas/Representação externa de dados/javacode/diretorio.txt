@@ -1,1 +1,1 @@
-digite o diretorio aqui
+G:\gerenciamento_notas.db
