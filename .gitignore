@@ -1,3 +1,4 @@
 #Ignora arquivos .class
 *.class
 *.jar
+*.db
