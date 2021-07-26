@@ -21,7 +21,6 @@ public class ProtocolController {
     private final String nick;
     private final HashMap<String, InetAddress> onlineUsers;
     private final UIControl ui;
-    private final InetAddress ipAddr;
 
     public ProtocolController(Properties properties) throws IOException {
         mport = (Integer) properties.get("multicastPort");
@@ -30,17 +29,21 @@ public class ProtocolController {
         nick = (String) properties.get("nickname");
         ui = (UIControl) properties.get("UI");
 
-        multicastSocket = new MulticastSocket(mport);
-        multicastSocket.setReuseAddress(true);
+        this.multicastSocket = new MulticastSocket(mport);
 
-        udpSocket = new DatagramSocket(uport);
+        System.out.println("multicastSocket");
+        System.out.println(this.multicastSocket.getInetAddress());
+        System.out.println(this.multicastSocket.getLocalPort());
+        System.out.println(this.multicastSocket.getChannel());
+        System.out.println(this.multicastSocket.getLocalAddress());
+        System.out.println(this.multicastSocket.getLocalSocketAddress());
+        System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        System.out.println(this.multicastSocket.getNetworkInterface());
 
-        onlineUsers = new HashMap<>();
-        onlineUsers.put("Todos", group);
+        this.udpSocket = new DatagramSocket(uport);
 
-        DatagramSocket socket = new DatagramSocket();
-        socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-        ipAddr = socket.getLocalAddress();
+        this.onlineUsers = new HashMap<>();
+        this.onlineUsers.put("Todos", group);
     }
 
     public void send(String targetUser, String msg) throws IOException {
@@ -50,7 +53,6 @@ public class ProtocolController {
         // verifica se a mensagem é para todos ou se é 'privada'
         if (targetUser.equals("Todos")) {
             if (msg.equals("JOIN")) {
-                System.out.println("JOIN");
                 // JOIN: junta ao grupo todos
                 type = 1;
             } else if (msg.equals("LEAVE")) {
@@ -66,7 +68,6 @@ public class ProtocolController {
             
         } else {
             if (msg.equals("JOINACK")) {
-                System.out.println("Resposta ao joinak");
                 // JOINAK: resposta ao join
                 type = 2;
             } else {
@@ -98,6 +99,16 @@ public class ProtocolController {
     
     public void join() throws IOException {
         this.multicastSocket.joinGroup(group);
+        
+        System.out.println("joinGroup");
+        System.out.println(this.multicastSocket.getInetAddress());
+        System.out.println(this.multicastSocket.getLocalPort());
+        System.out.println(this.multicastSocket.getChannel());
+        System.out.println(this.multicastSocket.getLocalAddress());
+        System.out.println(this.multicastSocket.getLocalSocketAddress());
+        System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        System.out.println(this.multicastSocket.getNetworkInterface());
+
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
         
@@ -127,13 +138,15 @@ public class ProtocolController {
         
         /* Obtem o apelido de quem enviou a mensagem */
         String senderNick = message.getSource();
-        System.out.println("msg: ");
+        System.out.println("Processamento pacotes: ");
+        System.out.println(p);
         System.out.println(message);
         
         if (message.getType() == 1) {
             if(nick.equals(senderNick) == false) {
                 /* Salva o apelido e endereço na lista de usuários ativos */
                 this.onlineUsers.put(senderNick, p.getAddress());
+                System.out.println("JOINACK ENVIADO");
                 /* Envia JOINACK */
                 send(senderNick, "JOINACK");
             }
@@ -145,8 +158,6 @@ public class ProtocolController {
             this.onlineUsers.remove(senderNick);
         }
 
-        System.out.println("ONLINE: ");
-        System.out.println(this.onlineUsers);
         /* Atualiza UI */
         ui.update(message);
     }
@@ -167,7 +178,6 @@ public class ProtocolController {
         // multicastSocket.receive(messageIn);
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         this.multicastSocket.receive(packet);
-
         this.processPacket(packet);
     }
 
