@@ -100,14 +100,14 @@ public class ProtocolController {
     public void join() throws IOException {
         this.multicastSocket.joinGroup(group);
         
-        System.out.println("joinGroup");
-        System.out.println(this.multicastSocket.getInetAddress());
-        System.out.println(this.multicastSocket.getLocalPort());
-        System.out.println(this.multicastSocket.getChannel());
-        System.out.println(this.multicastSocket.getLocalAddress());
-        System.out.println(this.multicastSocket.getLocalSocketAddress());
-        System.out.println(this.multicastSocket.getRemoteSocketAddress());
-        System.out.println(this.multicastSocket.getNetworkInterface());
+        // System.out.println("joinGroup");
+        // System.out.println(this.multicastSocket.getInetAddress());
+        // System.out.println(this.multicastSocket.getLocalPort());
+        // System.out.println(this.multicastSocket.getChannel());
+        // System.out.println(this.multicastSocket.getLocalAddress());
+        // System.out.println(this.multicastSocket.getLocalSocketAddress());
+        // System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        // System.out.println(this.multicastSocket.getNetworkInterface());
 
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
@@ -176,6 +176,7 @@ public class ProtocolController {
         // buffer = new byte[tamanho];
         // messageIn = new DatagramPacket(buffer, buffer.length);
         // multicastSocket.receive(messageIn);
+        System.out.println("receive....");
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         this.multicastSocket.receive(packet);
         this.processPacket(packet);
