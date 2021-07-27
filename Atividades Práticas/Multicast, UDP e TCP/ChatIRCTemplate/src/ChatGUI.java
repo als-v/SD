@@ -250,8 +250,8 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             listener = new Listener(protoController);
 
             /* juntar-se ao grupo e inicializar o recebimento de mensagens */
-            protoController.join();
             listener.start();
+            protoController.join();
             
         } catch (UnknownHostException uhe) {
              JOptionPane.showMessageDialog(this,

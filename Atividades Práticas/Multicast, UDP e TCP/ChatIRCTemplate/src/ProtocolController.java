@@ -94,7 +94,7 @@ public class ProtocolController {
         
         /* Envia a mensagem */
         DatagramPacket messageOut = new DatagramPacket(m, m.length, target, uport);
-        udpSocket.send(messageOut);
+        this.udpSocket.send(messageOut);
     }
     
     public void join() throws IOException {
@@ -132,6 +132,7 @@ public class ProtocolController {
         }
         
     public void processPacket(DatagramPacket p) throws IOException {
+        // todo: pegar apenaso util
         Message message = new Message(p.getData());
         System.out.println("process()");
         System.out.println(message);
@@ -178,6 +179,8 @@ public class ProtocolController {
         // multicastSocket.receive(messageIn);
         System.out.println("receive....");
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
+        System.out.println("packet multiocast");
+        System.out.println(packet.getData());
         this.multicastSocket.receive(packet);
         this.processPacket(packet);
     }
@@ -196,7 +199,10 @@ public class ProtocolController {
         // buffer = new byte[tamanho];
         // messageIn = new DatagramPacket(buffer, buffer.length);
         // multicastSocket.receive(messageIn);
+        System.out.println("receive udp....");
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
+        System.out.println("receive udp packet");
+        System.out.println(packet.getData());
         this.udpSocket.receive(packet);
 
         this.processPacket(packet);

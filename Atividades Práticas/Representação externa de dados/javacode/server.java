@@ -8,43 +8,26 @@ public class server {
     
     public static Connection connect(){
         Connection conn = null;
-        String urlLocal = null;
-        File file = new File("./diretorio.txt");
 
         try {
-            FileReader reader = new FileReader(file);
-            BufferedReader input = new BufferedReader(reader);
-            String linha;
-
-            while ((linha = input.readLine()) != null) {
-              urlLocal = linha;
-            }
-
-            input.close();
-
+            // db parameters
+            String url = "jdbc:sqlite:../database/gerenciamento_notas.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            
+            System.out.println("Connection to SQLite has been established.");
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
             try {
-                // db parameters
-                String url = "jdbc:sqlite:" + urlLocal;
-                // create a connection to the database
-                conn = DriverManager.getConnection(url);
-                
-                System.out.println("Connection to SQLite has been established.");
-                
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            } finally {
-                try {
-                    if (conn != null) {
-                        conn.close();
-                    }
-                } catch (SQLException ex) {
-                    System.out.println(ex.getMessage());
+                if (conn != null) {
+                    conn.close();
                 }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
             }
-
-          } catch (IOException ioe) {
-             System.out.println(ioe);
-          }
+        }
 
         return conn;
     }
@@ -125,5 +108,13 @@ public class server {
         } catch (IOException e) {
             System.out.println("Listen socket:" + e.getMessage());
         } //catch
+
+        try {
+            if(null != conn){
+                conn.close();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     } //main
 } //class    
