@@ -100,14 +100,14 @@ public class ProtocolController {
     public void join() throws IOException {
         this.multicastSocket.joinGroup(group);
         
-        // System.out.println("joinGroup");
-        // System.out.println(this.multicastSocket.getInetAddress());
-        // System.out.println(this.multicastSocket.getLocalPort());
-        // System.out.println(this.multicastSocket.getChannel());
-        // System.out.println(this.multicastSocket.getLocalAddress());
-        // System.out.println(this.multicastSocket.getLocalSocketAddress());
-        // System.out.println(this.multicastSocket.getRemoteSocketAddress());
-        // System.out.println(this.multicastSocket.getNetworkInterface());
+        System.out.println("joinGroup");
+        System.out.println(this.multicastSocket.getInetAddress());
+        System.out.println(this.multicastSocket.getLocalPort());
+        System.out.println(this.multicastSocket.getChannel());
+        System.out.println(this.multicastSocket.getLocalAddress());
+        System.out.println(this.multicastSocket.getLocalSocketAddress());
+        System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        System.out.println(this.multicastSocket.getNetworkInterface());
 
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
