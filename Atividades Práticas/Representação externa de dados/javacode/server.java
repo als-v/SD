@@ -28,15 +28,22 @@ public class server {
                 System.out.println(ex.getMessage());
             }
         }
-
+        
         return conn;
     }
-
-    public static Boolean insertMatricula(Connection conn, int ra, String codigoDiscplina, int ano, int semestre, float nota) {
+    
+    public static void insertMatricula(Connection conn, Gerenciamentodenotas.requisicaoResponseNotas.Builder res, int ra, String codigoDiscplina, int ano, int semestre, float nota) {
         String sql = "INSERT INTO matricula(ano, semestre, cod_disciplina, ra_aluno, nota) VALUES(?,?,?,?,?)";  
 
         try{  
+            Statement statement = conn.createStatement();
             PreparedStatement insert = conn.prepareStatement(sql);  
+
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM aluno WHERE (ra = " + String.valueOf(ra) + ");");
+            if(!resultSet.isBeforeFirst()){
+                res.setMessage("RA não encontrado");
+            }
+
             insert.setInt(1, ano);  
             insert.setInt(2, semestre);  
             insert.setString(3, codigoDiscplina);
@@ -45,10 +52,8 @@ public class server {
             
             insert.executeUpdate();  
 
-            return true;
         } catch (SQLException e) {  
             System.out.println(e.getMessage());  
-            return false;
         }  
 
     }
@@ -58,12 +63,13 @@ public class server {
         try {
             int serverPort = 7000; 
             ServerSocket listenSocket = new ServerSocket(serverPort);
+
+            Socket clientSocket = listenSocket.accept();
             while (true) {
-                Socket clientSocket = listenSocket.accept();
 
-                DataInputStream inClient = 
-                    new DataInputStream(clientSocket.getInputStream());
-
+                DataInputStream inClient = new DataInputStream(clientSocket.getInputStream());
+                DataOutputStream outClient = new DataOutputStream(clientSocket.getOutputStream());
+                
                 String valueStr = inClient.readLine();
                 int sizeBuffer = Integer.valueOf(valueStr);
                 byte[] buffer = new byte[sizeBuffer];
@@ -74,6 +80,9 @@ public class server {
                 
                 /* exibe na tela */
                 System.out.println("--\n" + p + "--\n");
+                
+                /* Instancia a resposta */
+                Gerenciamentodenotas.requisicaoResponseNotas.Builder res = Gerenciamentodenotas.requisicaoResponseNotas.newBuilder();
                 
                 switch (p.getOpt()) {
                     case 1:
@@ -91,11 +100,18 @@ public class server {
                         int semestre = requisicaoNotas.getSemestre();
                         float nota = requisicaoNotas.getNota();
 
-                        if(insertMatricula(conn, ra, codigoDisciplina, ano, semestre, nota)){
-                            System.out.println("Tudo certo");
-                        } else {
-                            System.err.println("Deu ruim");
-                        }
+                        insertMatricula(conn, res, ra, codigoDisciplina, ano, semestre, nota);
+
+                        /* Serializa resposta */
+                        byte[] msg = res.build().toByteArray();
+                        
+                        /* Manda tamanho da resposta */
+                        String msgSize = String.valueOf(msg.length) + " \n";
+                        byte[] size = msgSize.getBytes();
+                        outClient.write(size);
+                        
+                        /* Manda resposta */
+                        outClient.write(msg);
                         
                         break;
                     
