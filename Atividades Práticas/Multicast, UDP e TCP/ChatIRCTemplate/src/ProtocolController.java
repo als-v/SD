@@ -31,14 +31,14 @@ public class ProtocolController {
 
         this.multicastSocket = new MulticastSocket(mport);
 
-        System.out.println("multicastSocket");
-        System.out.println(this.multicastSocket.getInetAddress());
-        System.out.println(this.multicastSocket.getLocalPort());
-        System.out.println(this.multicastSocket.getChannel());
-        System.out.println(this.multicastSocket.getLocalAddress());
-        System.out.println(this.multicastSocket.getLocalSocketAddress());
-        System.out.println(this.multicastSocket.getRemoteSocketAddress());
-        System.out.println(this.multicastSocket.getNetworkInterface());
+        // System.out.println("multicastSocket");
+        // System.out.println(this.multicastSocket.getInetAddress());
+        // System.out.println(this.multicastSocket.getLocalPort());
+        // System.out.println(this.multicastSocket.getChannel());
+        // System.out.println(this.multicastSocket.getLocalAddress());
+        // System.out.println(this.multicastSocket.getLocalSocketAddress());
+        // System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        // System.out.println(this.multicastSocket.getNetworkInterface());
 
         this.udpSocket = new DatagramSocket(uport);
 
