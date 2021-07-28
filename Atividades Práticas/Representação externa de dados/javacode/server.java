@@ -19,43 +19,52 @@ public class server {
             
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
         }
         
         return conn;
     }
     
-    public static void insertMatricula(Connection conn, Gerenciamentodenotas.requisicaoResponseNotas.Builder res, int ra, String codigoDiscplina, int ano, int semestre, float nota) {
-        String sql = "INSERT INTO matricula(ano, semestre, cod_disciplina, ra_aluno, nota) VALUES(?,?,?,?,?)";  
-
+    public static int insertMatricula(Connection conn, Gerenciamentodenotas.requisicaoResponseNotas.Builder res, Gerenciamentodenotas.requisicaoNotas requisicaoNotas) {
+        int ra = requisicaoNotas.getRa();
+        String codigoDisciplina = requisicaoNotas.getCodDisciplina();
+        int ano = requisicaoNotas.getAno();
+        int semestre = requisicaoNotas.getSemestre();
+        float nota = requisicaoNotas.getNota();
+        
         try{  
-            Statement statement = conn.createStatement();
-            PreparedStatement insert = conn.prepareStatement(sql);  
 
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM aluno WHERE (ra = " + String.valueOf(ra) + ");");
-            if(!resultSet.isBeforeFirst()){
-                res.setMessage("RA não encontrado");
+            Statement statement = conn.createStatement();
+            
+            // tem aluno?
+            ResultSet resultadoQuery = statement.executeQuery("SELECT * FROM aluno WHERE ra = " + String.valueOf(ra) + ");");
+            if(!resultadoQuery.isBeforeFirst()){
+                res.setMessage("RA nao encontrado");
+                return 1;
             }
 
-            insert.setInt(1, ano);  
-            insert.setInt(2, semestre);  
-            insert.setString(3, codigoDiscplina);
-            insert.setInt(4, ra);  
-            insert.setFloat(5, nota);  
-            
-            insert.executeUpdate();  
+            // tem disciplina?
+            resultadoQuery = statement.executeQuery("SELECT * FROM disciplina WHERE (codigo = '" + String.valueOf(codigoDisciplina) + "')");
+            if(!resultadoQuery.isBeforeFirst()){
+                res.setMessage("Disciplina inexistente");
+                return 1;
+            }
 
+            // matricula
+            resultadoQuery = statement.executeQuery("SELECT * FROM matricula WHERE (ra_aluno = " + String.valueOf(ra) + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "+ String.valueOf(ano) +" AND semestre = "+ String.valueOf(semestre) +");");
+            if(!resultadoQuery.isBeforeFirst()){
+                res.setMessage("Matricula do aluno em " + String.valueOf(ano) + "/" + String.valueOf(semestre) + " inexistente");
+                return 1;
+            }
+
+            // atualiza a nota
+            statement.execute("UPDATE matricula SET nota = " + String.valueOf(nota) + " WHERE (ra_aluno = " + String.valueOf(ra) + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "+ String.valueOf(ano) +" AND semestre = "+ String.valueOf(semestre) +");");
+            res.setMessage("OK");
+
+            return 0;
         } catch (SQLException e) {  
             System.out.println(e.getMessage());  
+            return 1;
         }  
-
     }
     public static void main(String args[]) {
         Connection conn = connect();
@@ -94,16 +103,10 @@ public class server {
                         /* realiza o unmarshalling */
                         Gerenciamentodenotas.requisicaoNotas requisicaoNotas = Gerenciamentodenotas.requisicaoNotas.parseFrom(buffer);
                         
-                        int ra = requisicaoNotas.getRa();
-                        String codigoDisciplina = requisicaoNotas.getCodDisciplina();
-                        int ano = requisicaoNotas.getAno();
-                        int semestre = requisicaoNotas.getSemestre();
-                        float nota = requisicaoNotas.getNota();
-
-                        insertMatricula(conn, res, ra, codigoDisciplina, ano, semestre, nota);
+                        int statusCode = insertMatricula(conn, res, requisicaoNotas);
 
                         /* Serializa resposta */
-                        byte[] msg = res.build().toByteArray();
+                        byte[] msg = res.toString().getBytes();
                         
                         /* Manda tamanho da resposta */
                         String msgSize = String.valueOf(msg.length) + " \n";
@@ -125,12 +128,12 @@ public class server {
             System.out.println("Listen socket:" + e.getMessage());
         } //catch
 
-        try {
-            if(null != conn){
-                conn.close();
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        // try {
+        //     if(null != conn){
+        //         conn.resultadoQuery();
+        //     }
+        // } catch (SQLException e) {
+        //     System.out.println(e.getMessage());
+        // }
     } //main
 } //class    
