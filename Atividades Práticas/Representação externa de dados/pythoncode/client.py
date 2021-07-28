@@ -6,9 +6,9 @@ port = 7000
 
 addr = (ip, port) 
 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-client_socket.connect(addr)
+clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+clientSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+clientSocket.connect(addr)
 
 def todo():
     aluno = gerenciamentodenotas_pb2.Aluno()
@@ -21,13 +21,13 @@ def todo():
     msg = aluno.SerializeToString()
     size = len(msg)
 
-    client_socket.send((str(size) + "\n").encode())
-    client_socket.send(msg)
+    clientSocket.send((str(size) + "\n").encode())
+    clientSocket.send(msg)
 
-    client_socket.send((str(size) + "\n").encode())
-    client_socket.send(msg)
+    clientSocket.send((str(size) + "\n").encode())
+    clientSocket.send(msg)
 
-    client_socket.close()
+    clientSocket.close()
 
 def inserirNota():
     alunoRA = input('\nDigite o RA do aluno: ')
@@ -50,15 +50,23 @@ def inserirNota():
     msg = requisicaoOpt.SerializeToString()
     size = len(msg)
 
-    client_socket.send((str(size) + "\n").encode())
-    client_socket.send(msg)
+    clientSocket.send((str(size) + "\n").encode())
+    clientSocket.send(msg)
 
     # marshalling
     msg = requisicao.SerializeToString()
     size = len(msg)
 
-    client_socket.send((str(size) + "\n").encode())
-    client_socket.send(msg)
+    clientSocket.send((str(size) + "\n").encode())
+    clientSocket.send(msg)
+
+    tamanhoResponse = clientSocket.recv(512).decode()
+    print("tamanhoResponse: ", tamanhoResponse)
+
+    response = clientSocket.recv(int(tamanhoResponse)).decode()
+    
+    if response != "OK":
+        print('Erro ao realizar acao:\n', response)
 
 def consultaAluno():
     pass
