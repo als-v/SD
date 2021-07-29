@@ -48,21 +48,21 @@ public class ProtocolController {
         this.onlineUsers.put("Todos", group);
     }
 
-    public void visualizaArquivos() throws IOException{
-        File files = new File(this.diretorio);
-        File listaFiles[] = files.listFiles();
-        File arquivos = null;
-        StringBuilder arq = new StringBuilder();
+    // public void visualizaArquivos() throws IOException{
+    //     File files = new File(this.diretorio);
+    //     File listaFiles[] = files.listFiles();
+    //     File arquivos = null;
+    //     StringBuilder arq = new StringBuilder();
 
-        int i = 0;
-        for (int j = listaFiles.length; i < j; i++) {
-            arquivos = listaFiles[i];
-            arq.append(arquivos.getName() + "/");
-            System.out.println(arquivos.getName());
-        }
-        System.out.println("Lista com arquivos");
-        System.out.println(arq);
-    }
+    //     int i = 0;
+    //     for (int j = listaFiles.length; i < j; i++) {
+    //         arquivos = listaFiles[i];
+    //         arq.append(arquivos.getName() + "/");
+    //         System.out.println(arquivos.getName());
+    //     }
+    //     System.out.println("Lista com arquivos");
+    //     System.out.println(arq);
+    // }
 
     public void send(String targetUser, String msg) throws IOException {
         Byte type;
@@ -78,23 +78,38 @@ public class ProtocolController {
                 type = 5;
             } else {
                 // MSG: manda mensagem para todos
+                type = 3;
                 System.out.println("Cheguei Mensagem Normal");
                 System.out.println(msg);
 
                 if (msg.equals("$list")) {
-                    System.out.println("LIST");
-                    System.out.println(this.diretorio);
-                    visualizaArquivos();
+                    type = 6;
+
+                    System.out.println("Cheguei mensagem do tipo 6");
+                    message = new Message(type, this.nick, msg);
+                    sendMessageGroup(message);
                     // File files = new File(this.diretorio);
-                    // File listaFiles [] = files.listFiles();
-                    // int j=0;
-                    // for (int i= listaFiles.length; j<i; i++) {
-                    //     File arquivos = listaFiles[i];
+                    // File listaFiles[] = files.listFiles();
+                    // File arquivos = null;
+                    // StringBuilder arq = new StringBuilder();
+
+                    // System.out.println("LIST");
+                    // System.out.println(this.diretorio);
+                    // int i = 0;
+                    // for (int j = listaFiles.length; i < j; i++) {
+                    //     arquivos = listaFiles[i];
+                    //     arq.append(arquivos.getName() + "/");
                     //     System.out.println(arquivos.getName());
                     // }
+                    // System.out.println("Lista com arquivos");
+                    // System.out.println(arq);
+                    // String msgArquivos = arq.toString();
+
+                    // Message messageListaArquivos = new Message(type, nick, msgArquivos);
+                    // sendMessageGroup(messageListaArquivos);
+
                 }
                 
-                type = 3;
             }
             
             message = new Message(type, this.nick, msg);
@@ -170,6 +185,7 @@ public class ProtocolController {
         
     public void processPacket(DatagramPacket p) throws IOException {
         // todo: pegar apenaso util
+        System.out.println(p);
         Message message = new Message(Arrays.copyOf(p.getData(), p.getLength()));
         // Message message = new Message(p.getData());
         
@@ -194,11 +210,16 @@ public class ProtocolController {
             } else if (message.getType() == 5) {
                 /* remove o apelido e endereço da lista de suários ativos */
                 this.onlineUsers.remove(senderNick);
+            } else if (message.getType() == 6) {
+                System.out.println("PROCESS PACKAGE 6");
+
             }
-    
+            
+            System.out.println(message);
             /* Atualiza UI */
             ui.update(message);
         }
+        
     }
 
     public void receiveMulticastPacket() throws IOException {
