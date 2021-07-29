@@ -36,29 +36,11 @@ public class server {
             Statement statement = conn.createStatement();
             
             // tem aluno?
-            ResultSet resultadoQuery = statement.executeQuery("SELECT * FROM aluno WHERE ra = " + String.valueOf(ra) + ");");
+            ResultSet resultadoQuery = statement.executeQuery("SELECT * FROM aluno WHERE ra = " + String.valueOf(ra) + ";");
             if(!resultadoQuery.isBeforeFirst()){
                 res.setMessage("RA nao encontrado");
                 return 1;
             }
-
-            // tem disciplina?
-            resultadoQuery = statement.executeQuery("SELECT * FROM disciplina WHERE (codigo = '" + String.valueOf(codigoDisciplina) + "')");
-            if(!resultadoQuery.isBeforeFirst()){
-                res.setMessage("Disciplina inexistente");
-                return 1;
-            }
-
-            // matricula
-            resultadoQuery = statement.executeQuery("SELECT * FROM matricula WHERE (ra_aluno = " + String.valueOf(ra) + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "+ String.valueOf(ano) +" AND semestre = "+ String.valueOf(semestre) +");");
-            if(!resultadoQuery.isBeforeFirst()){
-                res.setMessage("Matricula do aluno em " + String.valueOf(ano) + "/" + String.valueOf(semestre) + " inexistente");
-                return 1;
-            }
-
-            // atualiza a nota
-            statement.execute("UPDATE matricula SET nota = " + String.valueOf(nota) + " WHERE (ra_aluno = " + String.valueOf(ra) + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "+ String.valueOf(ano) +" AND semestre = "+ String.valueOf(semestre) +");");
-            res.setMessage("OK");
 
             return 0;
         } catch (SQLException e) {  
