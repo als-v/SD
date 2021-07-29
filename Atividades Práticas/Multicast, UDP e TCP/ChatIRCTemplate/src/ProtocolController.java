@@ -7,7 +7,7 @@ import java.net.MulticastSocket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
-
+import java.io.*;
 /**
  * Gerencia o protocolo e o processamento das mensagens
  * 
@@ -22,6 +22,7 @@ public class ProtocolController {
     private final String nick;
     private final HashMap<String, InetAddress> onlineUsers;
     private final UIControl ui;
+    private String diretorio = "D:\\server_files";
 
     public ProtocolController(Properties properties) throws IOException {
         mport = (Integer) properties.get("multicastPort");
@@ -47,6 +48,22 @@ public class ProtocolController {
         this.onlineUsers.put("Todos", group);
     }
 
+    public void visualizaArquivos() throws IOException{
+        File files = new File(this.diretorio);
+        File listaFiles[] = files.listFiles();
+        File arquivos = null;
+        StringBuilder arq = new StringBuilder();
+
+        int i = 0;
+        for (int j = listaFiles.length; i < j; i++) {
+            arquivos = listaFiles[i];
+            arq.append(arquivos.getName() + "/");
+            System.out.println(arquivos.getName());
+        }
+        System.out.println("Lista com arquivos");
+        System.out.println(arq);
+    }
+
     public void send(String targetUser, String msg) throws IOException {
         Byte type;
         Message message = null;
@@ -61,6 +78,22 @@ public class ProtocolController {
                 type = 5;
             } else {
                 // MSG: manda mensagem para todos
+                System.out.println("Cheguei Mensagem Normal");
+                System.out.println(msg);
+
+                if (msg.equals("$list")) {
+                    System.out.println("LIST");
+                    System.out.println(this.diretorio);
+                    visualizaArquivos();
+                    // File files = new File(this.diretorio);
+                    // File listaFiles [] = files.listFiles();
+                    // int j=0;
+                    // for (int i= listaFiles.length; j<i; i++) {
+                    //     File arquivos = listaFiles[i];
+                    //     System.out.println(arquivos.getName());
+                    // }
+                }
+                
                 type = 3;
             }
             
@@ -84,6 +117,8 @@ public class ProtocolController {
 
     private void sendMessageGroup(Message msg) throws IOException {
         byte[] m = msg.getBytes();
+        System.out.println("Mensagem");
+        System.out.println(msg);
 
         /* Envia o tamanho da mensagem */
         DatagramPacket messageOut = new DatagramPacket(m, m.length, group, mport);
