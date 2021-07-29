@@ -4,6 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -100,14 +101,15 @@ public class ProtocolController {
     public void join() throws IOException {
         this.multicastSocket.joinGroup(group);
         
-        System.out.println("joinGroup");
-        System.out.println(this.multicastSocket.getInetAddress());
-        System.out.println(this.multicastSocket.getLocalPort());
-        System.out.println(this.multicastSocket.getChannel());
-        System.out.println(this.multicastSocket.getLocalAddress());
-        System.out.println(this.multicastSocket.getLocalSocketAddress());
-        System.out.println(this.multicastSocket.getRemoteSocketAddress());
-        System.out.println(this.multicastSocket.getNetworkInterface());
+        // System.out.println("joinGroup");
+        // System.out.println(group);
+        // System.out.println(this.multicastSocket.getInetAddress());
+        // System.out.println(this.multicastSocket.getLocalPort());
+        // System.out.println(this.multicastSocket.getChannel());
+        // System.out.println(this.multicastSocket.getLocalAddress());
+        // System.out.println(this.multicastSocket.getLocalSocketAddress());
+        // System.out.println(this.multicastSocket.getRemoteSocketAddress());
+        // System.out.println(this.multicastSocket.getNetworkInterface());
 
         Byte type = 1;
         Message message = new Message(type, this.nick, "");
@@ -133,34 +135,35 @@ public class ProtocolController {
         
     public void processPacket(DatagramPacket p) throws IOException {
         // todo: pegar apenaso util
-        Message message = new Message(p.getData());
-        System.out.println("process()");
-        System.out.println(message);
+        Message message = new Message(Arrays.copyOf(p.getData(), p.getLength()));
+        // Message message = new Message(p.getData());
         
-        /* Obtem o apelido de quem enviou a mensagem */
-        String senderNick = message.getSource();
-        System.out.println("Processamento pacotes: ");
-        System.out.println(p);
-        System.out.println(message);
-        
-        if (message.getType() == 1) {
-            if(nick.equals(senderNick) == false) {
-                /* Salva o apelido e endereço na lista de usuários ativos */
+        if(!nick.equals(message.getSource())) {
+            /* Obtem o apelido de quem enviou a mensagem */
+            String senderNick = message.getSource();
+            System.out.println("Processamento pacotes: ");
+            System.out.println(p);
+            System.out.println(message);
+            
+            if (message.getType() == 1) {
+                if(nick.equals(senderNick) == false) {
+                    /* Salva o apelido e endereço na lista de usuários ativos */
+                    this.onlineUsers.put(senderNick, p.getAddress());
+                    System.out.println("JOINACK ENVIADO");
+                    /* Envia JOINACK */
+                    send(senderNick, "JOINACK");
+                }
+            } else if (message.getType() == 2) {
+                /* Salva o apelido e endereço na lista de suários ativos */
                 this.onlineUsers.put(senderNick, p.getAddress());
-                System.out.println("JOINACK ENVIADO");
-                /* Envia JOINACK */
-                send(senderNick, "JOINACK");
+            } else if (message.getType() == 5) {
+                /* remove o apelido e endereço da lista de suários ativos */
+                this.onlineUsers.remove(senderNick);
             }
-        } else if (message.getType() == 2) {
-            /* Salva o apelido e endereço na lista de suários ativos */
-            this.onlineUsers.put(senderNick, p.getAddress());
-        } else if (message.getType() == 5) {
-            /* remove o apelido e endereço da lista de suários ativos */
-            this.onlineUsers.remove(senderNick);
+    
+            /* Atualiza UI */
+            ui.update(message);
         }
-
-        /* Atualiza UI */
-        ui.update(message);
     }
 
     public void receiveMulticastPacket() throws IOException {
