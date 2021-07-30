@@ -80,29 +80,31 @@ public class ProtocolController {
                 type = 5;
             } else if (msg.equals("LIST")) {
                 type = 6;
+                System.out.println("6");
+                //Descomentar aqui
+                // File files = new File(this.diretorio);
+                // File listaFiles[] = files.listFiles();
+                // File arquivos = null;
+                // StringBuilder arq = new StringBuilder();
 
-                File files = new File(this.diretorio);
-                File listaFiles[] = files.listFiles();
-                File arquivos = null;
-                StringBuilder arq = new StringBuilder();
-
-                System.out.println("LIST");
-                System.out.println(this.diretorio);
-                for (int i= 0; i< listaFiles.length;  i++) {
-                    arquivos = listaFiles[i];
-                    arq.append(arquivos.getName() + "/");
-                    System.out.println(arquivos.getName());
-                }
-                System.out.println("Lista com arquivos");
-                System.out.println(arq);
-                String msgArquivos = arq.toString();
+                // System.out.println("LIST");
+                // System.out.println(this.diretorio);
+                // for (int i= 0; i< listaFiles.length;  i++) {
+                //     arquivos = listaFiles[i];
+                //     arq.append(arquivos.getName() + "/");
+                //     System.out.println(arquivos.getName());
+                // }
+                // System.out.println("Lista com arquivos");
+                // System.out.println(arq);
+                // String msgArquivos = arq.toString();
+                //Acaba aqui
 
                 // ChatGUI mensagem = new ChatGUI();
                 // mensagem.writeLocalMessage(this.nick, msgArquivos);
 
                 // Message messageListaArquivos = new Message(type, nick, msgArquivos);
                 // sendMessageGroup(messageListaArquivos);
-                msg = msgArquivos;
+                // msg = msgArquivos;
                 // msg = "oi";
 
                 
@@ -191,6 +193,13 @@ public class ProtocolController {
     public void processPacket(DatagramPacket p) throws IOException {
         // todo: pegar apenaso util
         Message message = new Message(Arrays.copyOf(p.getData(), p.getLength()));
+        String data = String.valueOf(p.getData());
+        System.out.println("LEN");
+        System.out.println(p.getLength());
+        System.out.println(message);
+        System.out.println(data);
+
+
         // Message message = new Message(p.getData());
         
         if(!nick.equals(message.getSource()) || message.getType() == 6) {
@@ -213,7 +222,29 @@ public class ProtocolController {
                 /* remove o apelido e endereço da lista de suários ativos */
                 this.onlineUsers.remove(senderNick);
             } else if (message.getType() == 6) {
-                System.out.println(senderNick);
+                // if (data.equals("$in")) {
+                File files = new File(this.diretorio);
+                File listaFiles[] = files.listFiles();
+                File arquivos = null;
+                StringBuilder arq = new StringBuilder();
+
+                System.out.println("LIST");
+                System.out.println(this.diretorio);
+                arq.append("\n");
+                for (int i= 0; i< listaFiles.length;  i++) {
+                    arquivos = listaFiles[i];
+                    
+                    arq.append(arquivos.getName() + "\n");
+                    System.out.println(arquivos.getName());
+                }
+                System.out.println("Lista com arquivos");
+                System.out.println(arq);
+                Message msgArquivos = new Message(message.getType(), this.nick, String.valueOf(arq));
+                System.out.println(msgArquivos);
+                // String msgArquivos = arq.toString();
+                this.ui.update(msgArquivos);
+               
+                // }
                 // Byte b = 12;
                 // Message test = new Message(b,"eu","olá");
                 // ui.update(test);

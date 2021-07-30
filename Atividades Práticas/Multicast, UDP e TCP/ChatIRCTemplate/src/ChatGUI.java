@@ -329,7 +329,9 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             styledDoc.insertString(styledDoc.getLength(), "<" + id + "> ", greenStyle);
             styledDoc.insertString(styledDoc.getLength(), mensagem + "\n", blackStyle);
 
-            areaMensagem.setCaretPosition(areaMensagem.getText().length());
+            // areaMensagem.setCaretPosition(areaMensagem.getText().length());
+            areaMensagem.setCaretPosition(areaMensagem.getDocument().getLength());
+
         } 
         catch (BadLocationException ble) {
             System.err.println("Erro ao escrever mensagem na UI" + ble);
@@ -347,7 +349,9 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             styledDoc.insertString(styledDoc.getLength(), "<" + id + "> ", blueStyle);
             styledDoc.insertString(styledDoc.getLength(), mensagem + "\n", blackStyle);
 
-            areaMensagem.setCaretPosition(areaMensagem.getText().length());
+            // areaMensagem.setCaretPosition(areaMensagem.getText().length());
+            areaMensagem.setCaretPosition(areaMensagem.getDocument().getLength());
+
         } 
         catch (BadLocationException ble) {
             System.err.println("Erro ao escrever mensagem na UI" + ble);
@@ -395,6 +399,15 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             case 5:
                 this.remNickname(m.getSource());
                 break;
+            case 6:
+                if(!m.getMessage().equals("LIST")) {
+                    System.out.println("UPDATE");
+                    System.out.println(m.getMessage());
+
+                    this.writeLocalMessage("Arquivos encontrados",m.getMessage());
+                }
+                break;
+            
         }
         
     }
