@@ -401,10 +401,7 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
                 break;
             case 6:
                 if(!m.getMessage().equals("LIST")) {
-                    System.out.println("UPDATE");
-                    System.out.println(m.getMessage());
-
-                    this.writeLocalMessage("Arquivos encontrados",m.getMessage());
+                    this.writeLocalMessage("Comando LIST: Arquivos encontrados",m.getMessage());
                 }
                 break;
             
