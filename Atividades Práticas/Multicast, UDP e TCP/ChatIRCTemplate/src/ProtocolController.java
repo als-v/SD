@@ -4,10 +4,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.security.MessageDigestSpi;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.io.*;
+
 /**
  * Gerencia o protocolo e o processamento das mensagens
  * 
@@ -76,43 +78,45 @@ public class ProtocolController {
             } else if (msg.equals("LEAVE")) {
                 // LEAVE: deixa o grupo
                 type = 5;
-            } else {
+            } else if (msg.equals("LIST")) {
+                type = 6;
+
+                File files = new File(this.diretorio);
+                File listaFiles[] = files.listFiles();
+                File arquivos = null;
+                StringBuilder arq = new StringBuilder();
+
+                System.out.println("LIST");
+                System.out.println(this.diretorio);
+                for (int i= 0; i< listaFiles.length;  i++) {
+                    arquivos = listaFiles[i];
+                    arq.append(arquivos.getName() + "/");
+                    System.out.println(arquivos.getName());
+                }
+                System.out.println("Lista com arquivos");
+                System.out.println(arq);
+                String msgArquivos = arq.toString();
+
+                // ChatGUI mensagem = new ChatGUI();
+                // mensagem.writeLocalMessage(this.nick, msgArquivos);
+
+                // Message messageListaArquivos = new Message(type, nick, msgArquivos);
+                // sendMessageGroup(messageListaArquivos);
+                msg = msgArquivos;
+                // msg = "oi";
+
+                
+            }else {
                 // MSG: manda mensagem para todos
                 type = 3;
                 System.out.println("Cheguei Mensagem Normal");
-                System.out.println(msg);
-
-                if (msg.equals("$list")) {
-                    type = 6;
-
-                    System.out.println("Cheguei mensagem do tipo 6");
-                    message = new Message(type, this.nick, msg);
-                    sendMessageGroup(message);
-                    // File files = new File(this.diretorio);
-                    // File listaFiles[] = files.listFiles();
-                    // File arquivos = null;
-                    // StringBuilder arq = new StringBuilder();
-
-                    // System.out.println("LIST");
-                    // System.out.println(this.diretorio);
-                    // int i = 0;
-                    // for (int j = listaFiles.length; i < j; i++) {
-                    //     arquivos = listaFiles[i];
-                    //     arq.append(arquivos.getName() + "/");
-                    //     System.out.println(arquivos.getName());
-                    // }
-                    // System.out.println("Lista com arquivos");
-                    // System.out.println(arq);
-                    // String msgArquivos = arq.toString();
-
-                    // Message messageListaArquivos = new Message(type, nick, msgArquivos);
-                    // sendMessageGroup(messageListaArquivos);
-
-                }
-                
+                System.out.println(msg);                
             }
-            
+
+            // System.out.println("Antes de enviar para o grupo");
+            // System.out.println(msg);
             message = new Message(type, this.nick, msg);
+            // System.out.println(message);
             sendMessageGroup(message);
             
         } else {
@@ -137,6 +141,7 @@ public class ProtocolController {
 
         /* Envia o tamanho da mensagem */
         DatagramPacket messageOut = new DatagramPacket(m, m.length, group, mport);
+        // System.out.println(msg);
         this.multicastSocket.send(messageOut);
     }
     
@@ -185,18 +190,15 @@ public class ProtocolController {
         
     public void processPacket(DatagramPacket p) throws IOException {
         // todo: pegar apenaso util
-        System.out.println(p);
         Message message = new Message(Arrays.copyOf(p.getData(), p.getLength()));
         // Message message = new Message(p.getData());
         
-        if(!nick.equals(message.getSource())) {
+        if(!nick.equals(message.getSource()) || message.getType() == 6) {
             /* Obtem o apelido de quem enviou a mensagem */
             String senderNick = message.getSource();
             System.out.println("Processamento pacotes: ");
-            System.out.println(p);
-            System.out.println(message);
             
-            if (message.getType() == 1) {
+            if (message.getType() == 1 ) {
                 if(nick.equals(senderNick) == false) {
                     /* Salva o apelido e endereço na lista de usuários ativos */
                     this.onlineUsers.put(senderNick, p.getAddress());
@@ -211,11 +213,14 @@ public class ProtocolController {
                 /* remove o apelido e endereço da lista de suários ativos */
                 this.onlineUsers.remove(senderNick);
             } else if (message.getType() == 6) {
-                System.out.println("PROCESS PACKAGE 6");
+                System.out.println(senderNick);
+                // Byte b = 12;
+                // Message test = new Message(b,"eu","olá");
+                // ui.update(test);
+                // send(senderNick, "LIST");
 
             }
             
-            System.out.println(message);
             /* Atualiza UI */
             ui.update(message);
         }
