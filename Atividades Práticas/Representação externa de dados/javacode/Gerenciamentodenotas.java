@@ -2685,12 +2685,6 @@ public final class Gerenciamentodenotas {
      * @return The periodo.
      */
     int getPeriodo();
-
-    /**
-     * <code>int32 cod_curso = 4;</code>
-     * @return The codCurso.
-     */
-    int getCodCurso();
   }
   /**
    * <pre>
@@ -2756,11 +2750,6 @@ public final class Gerenciamentodenotas {
             case 24: {
 
               periodo_ = input.readInt32();
-              break;
-            }
-            case 32: {
-
-              codCurso_ = input.readInt32();
               break;
             }
             default: {
@@ -2855,17 +2844,6 @@ public final class Gerenciamentodenotas {
       return periodo_;
     }
 
-    public static final int COD_CURSO_FIELD_NUMBER = 4;
-    private int codCurso_;
-    /**
-     * <code>int32 cod_curso = 4;</code>
-     * @return The codCurso.
-     */
-    @java.lang.Override
-    public int getCodCurso() {
-      return codCurso_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2889,9 +2867,6 @@ public final class Gerenciamentodenotas {
       if (periodo_ != 0) {
         output.writeInt32(3, periodo_);
       }
-      if (codCurso_ != 0) {
-        output.writeInt32(4, codCurso_);
-      }
       unknownFields.writeTo(output);
     }
 
@@ -2911,10 +2886,6 @@ public final class Gerenciamentodenotas {
       if (periodo_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, periodo_);
-      }
-      if (codCurso_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, codCurso_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2937,8 +2908,6 @@ public final class Gerenciamentodenotas {
           .equals(other.getNome())) return false;
       if (getPeriodo()
           != other.getPeriodo()) return false;
-      if (getCodCurso()
-          != other.getCodCurso()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2956,8 +2925,6 @@ public final class Gerenciamentodenotas {
       hash = (53 * hash) + getNome().hashCode();
       hash = (37 * hash) + PERIODO_FIELD_NUMBER;
       hash = (53 * hash) + getPeriodo();
-      hash = (37 * hash) + COD_CURSO_FIELD_NUMBER;
-      hash = (53 * hash) + getCodCurso();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3101,8 +3068,6 @@ public final class Gerenciamentodenotas {
 
         periodo_ = 0;
 
-        codCurso_ = 0;
-
         return this;
       }
 
@@ -3132,7 +3097,6 @@ public final class Gerenciamentodenotas {
         result.ra_ = ra_;
         result.nome_ = nome_;
         result.periodo_ = periodo_;
-        result.codCurso_ = codCurso_;
         onBuilt();
         return result;
       }
@@ -3190,9 +3154,6 @@ public final class Gerenciamentodenotas {
         }
         if (other.getPeriodo() != 0) {
           setPeriodo(other.getPeriodo());
-        }
-        if (other.getCodCurso() != 0) {
-          setCodCurso(other.getCodCurso());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -3357,37 +3318,6 @@ public final class Gerenciamentodenotas {
       public Builder clearPeriodo() {
         
         periodo_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int codCurso_ ;
-      /**
-       * <code>int32 cod_curso = 4;</code>
-       * @return The codCurso.
-       */
-      @java.lang.Override
-      public int getCodCurso() {
-        return codCurso_;
-      }
-      /**
-       * <code>int32 cod_curso = 4;</code>
-       * @param value The codCurso to set.
-       * @return This builder for chaining.
-       */
-      public Builder setCodCurso(int value) {
-        
-        codCurso_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>int32 cod_curso = 4;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearCodCurso() {
-        
-        codCurso_ = 0;
         onChanged();
         return this;
       }
@@ -4441,10 +4371,10 @@ public final class Gerenciamentodenotas {
       "\n\027requisicaoResponseNotas\022\017\n\007message\030\001 \001" +
       "(\t\"Q\n\030requisicaoConsultaAlunos\022\026\n\016cod_di" +
       "sciplina\030\001 \001(\t\022\013\n\003ano\030\002 \001(\005\022\020\n\010semestre\030" +
-      "\003 \001(\005\"E\n\005Aluno\022\n\n\002ra\030\001 \001(\005\022\014\n\004nome\030\002 \001(\t" +
-      "\022\017\n\007periodo\030\003 \001(\005\022\021\n\tcod_curso\030\004 \001(\005\"J\n " +
-      "requisicaoResponseConsultaAlunos\022\017\n\007mess" +
-      "age\030\001 \001(\t\022\025\n\005aluno\030\002 \003(\0132\006.Alunob\006proto3"
+      "\003 \001(\005\"2\n\005Aluno\022\n\n\002ra\030\001 \001(\005\022\014\n\004nome\030\002 \001(\t" +
+      "\022\017\n\007periodo\030\003 \001(\005\"J\n requisicaoResponseC" +
+      "onsultaAlunos\022\017\n\007message\030\001 \001(\t\022\025\n\005aluno\030" +
+      "\002 \003(\0132\006.Alunob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4479,7 +4409,7 @@ public final class Gerenciamentodenotas {
     internal_static_Aluno_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Aluno_descriptor,
-        new java.lang.String[] { "Ra", "Nome", "Periodo", "CodCurso", });
+        new java.lang.String[] { "Ra", "Nome", "Periodo", });
     internal_static_requisicaoResponseConsultaAlunos_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_requisicaoResponseConsultaAlunos_fieldAccessorTable = new

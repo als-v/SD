@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1agerenciamentodenotas.proto\"\x1c\n\rrequisicaoOpt\x12\x0b\n\x03opt\x18\x01 \x01(\x05\"b\n\x0frequisicaoNotas\x12\n\n\x02ra\x18\x01 \x01(\x05\x12\x16\n\x0e\x63od_disciplina\x18\x02 \x01(\t\x12\x0b\n\x03\x61no\x18\x03 \x01(\x05\x12\x10\n\x08semestre\x18\x04 \x01(\x05\x12\x0c\n\x04nota\x18\x05 \x01(\x02\"*\n\x17requisicaoResponseNotas\x12\x0f\n\x07message\x18\x01 \x01(\t\"Q\n\x18requisicaoConsultaAlunos\x12\x16\n\x0e\x63od_disciplina\x18\x01 \x01(\t\x12\x0b\n\x03\x61no\x18\x02 \x01(\x05\x12\x10\n\x08semestre\x18\x03 \x01(\x05\"E\n\x05\x41luno\x12\n\n\x02ra\x18\x01 \x01(\x05\x12\x0c\n\x04nome\x18\x02 \x01(\t\x12\x0f\n\x07periodo\x18\x03 \x01(\x05\x12\x11\n\tcod_curso\x18\x04 \x01(\x05\"J\n requisicaoResponseConsultaAlunos\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x15\n\x05\x61luno\x18\x02 \x03(\x0b\x32\x06.Alunob\x06proto3'
+  serialized_pb=b'\n\x1agerenciamentodenotas.proto\"\x1c\n\rrequisicaoOpt\x12\x0b\n\x03opt\x18\x01 \x01(\x05\"b\n\x0frequisicaoNotas\x12\n\n\x02ra\x18\x01 \x01(\x05\x12\x16\n\x0e\x63od_disciplina\x18\x02 \x01(\t\x12\x0b\n\x03\x61no\x18\x03 \x01(\x05\x12\x10\n\x08semestre\x18\x04 \x01(\x05\x12\x0c\n\x04nota\x18\x05 \x01(\x02\"*\n\x17requisicaoResponseNotas\x12\x0f\n\x07message\x18\x01 \x01(\t\"Q\n\x18requisicaoConsultaAlunos\x12\x16\n\x0e\x63od_disciplina\x18\x01 \x01(\t\x12\x0b\n\x03\x61no\x18\x02 \x01(\x05\x12\x10\n\x08semestre\x18\x03 \x01(\x05\"2\n\x05\x41luno\x12\n\n\x02ra\x18\x01 \x01(\x05\x12\x0c\n\x04nome\x18\x02 \x01(\t\x12\x0f\n\x07periodo\x18\x03 \x01(\x05\"J\n requisicaoResponseConsultaAlunos\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x15\n\x05\x61luno\x18\x02 \x03(\x0b\x32\x06.Alunob\x06proto3'
 )
 
 
@@ -224,13 +224,6 @@ _ALUNO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='cod_curso', full_name='Aluno.cod_curso', index=3,
-      number=4, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -244,7 +237,7 @@ _ALUNO = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=287,
-  serialized_end=356,
+  serialized_end=337,
 )
 
 
@@ -282,8 +275,8 @@ _REQUISICAORESPONSECONSULTAALUNOS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=358,
-  serialized_end=432,
+  serialized_start=339,
+  serialized_end=413,
 )
 
 _REQUISICAORESPONSECONSULTAALUNOS.fields_by_name['aluno'].message_type = _ALUNO

@@ -10,35 +10,15 @@ clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clientSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 clientSocket.connect(addr)
 
-def todo():
-    aluno = gerenciamentodenotas_pb2.Aluno()
-    aluno.ra = 234
-    aluno.nome = "ola"
-    aluno.periodo = 3
-    aluno.cod_curso = 34
+labelProtocolBuffer = '\n4 - Alterar a comunicacao para: Protocol Buffer'
+labelJson = '\n4- Alterar a comunicacao para JSON'
 
-    # marshalling
-    msg = aluno.SerializeToString()
-    size = len(msg)
-
-    clientSocket.send((str(size) + "\n").encode())
-    clientSocket.send(msg)
-
-    clientSocket.send((str(size) + "\n").encode())
-    clientSocket.send(msg)
-
-    clientSocket.close()
-
-def inserirNota():
-    alunoRA = input('\nDigite o RA do aluno: ')
-    disciplinaCodigo = input('Digite o codigo da disciplina: ')
-    disciplinaAno = input('Digite o ano da disciplina: ')
-    disciplinaSemestre = input('Digite o semestre da disciplina: ')
-    alunoNota = input('Digite a nota do aluno: ')
-
+def inserirRemoverNota(alunoRA, disciplinaCodigo, disciplinaAno, disciplinaSemestre, alunoNota, flag = 1):
+    # crio a primeira mensagem
     requisicaoOpt = gerenciamentodenotas_pb2.requisicaoOpt()
-    requisicaoOpt.opt = 1
+    requisicaoOpt.opt = flag
 
+    # crio a segunda mensagem
     requisicao = gerenciamentodenotas_pb2.requisicaoNotas()
     requisicao.ra = int(alunoRA)
     requisicao.cod_disciplina = disciplinaCodigo
@@ -50,6 +30,7 @@ def inserirNota():
     msg = requisicaoOpt.SerializeToString()
     size = len(msg)
 
+    # envio a primeira mensagem
     clientSocket.send((str(size) + "\n").encode())
     clientSocket.send(msg)
 
@@ -57,34 +38,99 @@ def inserirNota():
     msg = requisicao.SerializeToString()
     size = len(msg)
 
+    # envio a segunda mensagem
     clientSocket.send((str(size) + "\n").encode())
     clientSocket.send(msg)
 
+    # recebo a resposta do servidor
     tamanhoResponse = clientSocket.recv(512).decode()
-    print("tamanhoResponse: ", tamanhoResponse)
-
     response = clientSocket.recv(int(tamanhoResponse)).decode()
+
+    # mostro na tela
+    print('\n=========================\n', response, '\n=========================\n')
+
+def consultaAluno(disciplinaCodigo, disciplinaAno, disciplinaSemestre):
+    # crio a primeira mensagem
+    requisicaoOpt = gerenciamentodenotas_pb2.requisicaoOpt()
+    requisicaoOpt.opt = 3
+
+    # crio a segunda mensagem
+    requisicao = gerenciamentodenotas_pb2.requisicaoConsultaAlunos()
+    requisicao.cod_disciplina = disciplinaCodigo
+    requisicao.ano = int(disciplinaAno)
+    requisicao.semestre = int(disciplinaSemestre)
+
+    # marshalling
+    msg = requisicaoOpt.SerializeToString()
+    size = len(msg)
+
+    # envio a primeira mensagem
+    clientSocket.send((str(size) + "\n").encode())
+    clientSocket.send(msg)
+
+    # marshalling
+    msg = requisicao.SerializeToString()
+    size = len(msg)
+
+    # envio a segunda mensagem
+    clientSocket.send((str(size) + "\n").encode())
+    clientSocket.send(msg)
+
+    # recebo a resposta
+    tamanhoResponse = int(clientSocket.recv(1024).decode())
+    response = clientSocket.recv(tamanhoResponse).decode()
     
-    if response != "OK":
-        print('Erro ao realizar acao:\n', response)
-
-def consultaAluno():
-    pass
-
-def init():
-    print('Bem vindo\nO servico apresenta as seguintes funcionalidades:\n1 - Inserir nota a um aluno\n2 - Consultar alunos de uma disciplina\n3 - Help\n4 - Sair')
+    # mostro na tela
+    print('\n=========================\n', response, '\n=========================\n')
 
 def main():
-    init()
+    # protocolBuffer (0) ou json (1)
+    bufferJsonFlag = 0
+
     while True:
+        if bufferJsonFlag == 0:
+            print('1 - Adicionar nota a um aluno\n2 - Remover nota de um aluno\n3 - Consultar alunos de uma disciplina' + labelJson + '\n5 - Sair')
+        else:
+            print('1 - Adicionar nota a um aluno\n2 - Remover nota de um aluno\n3 - Consultar alunos de uma disciplina' + labelProtocolBuffer + '\n5 - Sair')
+
         comando = input('\nSelecione uma operacao: ')
         
-        if comando == str(1):
-            inserirNota()
-        elif comando == str(2):
-            consultaAluno()
+        if (comando == str(1) or comando == str(2)):
+            alunoRA = input('> Digite o RA do aluno: ')
+            disciplinaCodigo = input('> Digite o codigo da disciplina: ')
+            disciplinaAno = input('> Digite o ano da disciplina: ')
+            disciplinaSemestre = input('> Digite o semestre da disciplina: ')
+
+            if alunoRA != '' and disciplinaCodigo != '' and disciplinaAno != '' and disciplinaSemestre != '':
+                if comando == str(1):
+                    alunoNota = input('> Digite a nota do aluno: ')
+                    
+                    if int(alunoNota) > 0:
+                        inserirRemoverNota(alunoRA, disciplinaCodigo, disciplinaAno, disciplinaSemestre, alunoNota, 1)
+                    else:
+                        print('ERRO: Nota negativa...')
+                else:
+                    inserirRemoverNota(alunoRA, disciplinaCodigo, disciplinaAno, disciplinaSemestre, 0, 2)
+            else:
+                print('\nERRO: preencha os valores corretamente\n')
+
         elif comando == str(3):
-            init()
+            disciplinaCodigo = input('> Digite o codigo da disciplina: ')
+            disciplinaAno = input('> Digite o ano da disciplina: ')
+            disciplinaSemestre = input('> Digite o semestre da disciplina: ')
+            
+            if disciplinaCodigo != '' and disciplinaAno != '' and disciplinaSemestre != '':
+                consultaAluno(disciplinaCodigo, disciplinaAno, disciplinaSemestre)
+            else:
+                print('\nERRO: preencha os valores corretamente\n')
+    
         elif comando == str(4):
+            if bufferJsonFlag == 0:
+                bufferJsonFlag = 1
+            else:
+                bufferJsonFlag = 0
+        
+        elif comando == str(5):
             break
+
 main()
