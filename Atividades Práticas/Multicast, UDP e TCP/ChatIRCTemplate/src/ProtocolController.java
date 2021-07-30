@@ -24,7 +24,7 @@ public class ProtocolController {
     private final String nick;
     private final HashMap<String, InetAddress> onlineUsers;
     private final UIControl ui;
-    private String diretorio = "D:\\server_files";
+    private String diretorio = "..\\server_files";
 
     public ProtocolController(Properties properties) throws IOException {
         mport = (Integer) properties.get("multicastPort");
@@ -230,25 +230,18 @@ public class ProtocolController {
 
                 System.out.println("LIST");
                 System.out.println(this.diretorio);
-                arq.append("\n");
+                // arq.append("\n");
                 for (int i= 0; i< listaFiles.length;  i++) {
                     arquivos = listaFiles[i];
                     
-                    arq.append(arquivos.getName() + "\n");
+                    arq.append("\n" + arquivos.getName());
                     System.out.println(arquivos.getName());
                 }
                 System.out.println("Lista com arquivos");
                 System.out.println(arq);
                 Message msgArquivos = new Message(message.getType(), this.nick, String.valueOf(arq));
                 System.out.println(msgArquivos);
-                // String msgArquivos = arq.toString();
                 this.ui.update(msgArquivos);
-               
-                // }
-                // Byte b = 12;
-                // Message test = new Message(b,"eu","olá");
-                // ui.update(test);
-                // send(senderNick, "LIST");
 
             }
             
