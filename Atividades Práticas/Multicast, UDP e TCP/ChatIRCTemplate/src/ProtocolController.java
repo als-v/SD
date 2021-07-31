@@ -1,32 +1,32 @@
-'''
-    ### QUESTÃO 1 - TCP ###
-    # Autores: Juan e Alisson
-    # Data de criação:      20/07/2021
-    # Data de modificação:  30/07/2021
-    #Descrição: Nesta atividade foi implementado um serviço de chat, que possibilita o envio de mensagens para um grupo de pessoas, utilizando mensagens Multicast, o envio de
-        mensagens privadas, ou seja, mensagens enviadas individualmente para pessoas ativas, através de mensagens UDP, utilizando uma interface visual para interação (GUI). 
-        Há vários tipos de mensagens que podem ser enviadas:
-            - Tipo 1: A mensagem do tipo 1 é enviada via Multicast para identificar que uma operação de Join será executada, sendo utilizada quando o usuário deseja se juntar a um grupo de 
-            conversação. Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 1), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
-            vazia.
-            - Tipo 2: A mensagem do tipo 2 (JOINACK) é enviada via UDP como resposta para a mensagem de Join recebida. O JOINACK torna possível que as listas de usuários ativos
-            permaneça atualizada. Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 2), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
-            vazia.
-            -Tipo 3: A mensagem do tipo 3 (Mensagem Comum) é enviada para todos os membros presentes no grupo utilizando um IP e porta específicos. Essa mensagem é enviada para todos 
-            quando um mensagem comum é enviada no grupo. Uma mensagem comum seria uma mensagem que não resulta em nenhuma ação específica, ela só é mostrada para todos do grupo.
-            Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 3), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
-            a mensagem enviada pelo usuário.
-            - Tipo 4: A mensagem do tipo 4 (Mensagem Individual) é enviada via UDP, utilizada para enviar mensagens para um usuários específico, que neste caso estará escutando na porta 6799.
-            Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 4), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
-            a mensagem enviada para um usuário específico.
-            -Tipo 5: A mensagem do tipo 5 (LEAVE) é enviada para todos do grupo identificando que o membro que a mandou, está deixando grupo de conversação, permitindo que aqueles membros ativos
-            que receberam essa mensagem, o retire da lista de membros online.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 5), a origem (o nick do usuário que a enviou) 
-            e a mensagem em sí, que neste caso é vazia.
-            -Tipo 6: A mensagem do tipo 6 (LIST) é enviada quando um membro deseja listar os arquivos presentes em uma pasta específica, caso ele precise verificar quais arquivos estão presentes
-            antes de enviar um arquivo específico para algum outro membro.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 6), a origem (o nick do usuário que a enviou) 
-            e a mensagem em sí, que neste caso é uma string com todos os nomes de arquivos concatenados (cada nome de arquivo é separado por um '\n').
+
+    // ### Atividade Programação com socket Multicast, UDP e TCP###
+    // # Autores: Juan e Alisson
+    // # Data de criação:      20/07/2021
+    // # Data de modificação:  30/07/2021
+    // #Descrição: Nesta atividade foi implementado um serviço de chat, que possibilita o envio de mensagens para um grupo de pessoas, utilizando mensagens Multicast, o envio de
+    //     mensagens privadas, ou seja, mensagens enviadas individualmente para pessoas ativas, através de mensagens UDP, utilizando uma interface visual para interação (GUI). 
+    //     Há vários tipos de mensagens que podem ser enviadas:
+    //         - Tipo 1: A mensagem do tipo 1 é enviada via Multicast para identificar que uma operação de Join será executada, sendo utilizada quando o usuário deseja se juntar a um grupo de 
+    //         conversação. Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 1), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+    //         vazia.
+    //         - Tipo 2: A mensagem do tipo 2 (JOINACK) é enviada via UDP como resposta para a mensagem de Join recebida. O JOINACK torna possível que as listas de usuários ativos
+    //         permaneça atualizada. Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 2), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+    //         vazia.
+    //         -Tipo 3: A mensagem do tipo 3 (Mensagem Comum) é enviada para todos os membros presentes no grupo utilizando um IP e porta específicos. Essa mensagem é enviada para todos 
+    //         quando um mensagem comum é enviada no grupo. Uma mensagem comum seria uma mensagem que não resulta em nenhuma ação específica, ela só é mostrada para todos do grupo.
+    //         Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 3), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+    //         a mensagem enviada pelo usuário.
+    //         - Tipo 4: A mensagem do tipo 4 (Mensagem Individual) é enviada via UDP, utilizada para enviar mensagens para um usuários específico, que neste caso estará escutando na porta 6799.
+    //         Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 4), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+    //         a mensagem enviada para um usuário específico.
+    //         -Tipo 5: A mensagem do tipo 5 (LEAVE) é enviada para todos do grupo identificando que o membro que a mandou, está deixando grupo de conversação, permitindo que aqueles membros ativos
+    //         que receberam essa mensagem, o retire da lista de membros online.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 5), a origem (o nick do usuário que a enviou) 
+    //         e a mensagem em sí, que neste caso é vazia.
+    //         -Tipo 6: A mensagem do tipo 6 (LIST) é enviada quando um membro deseja listar os arquivos presentes em uma pasta específica, caso ele precise verificar quais arquivos estão presentes
+    //         antes de enviar um arquivo específico para algum outro membro.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 6), a origem (o nick do usuário que a enviou) 
+    //         e a mensagem em sí, que neste caso é uma string com todos os nomes de arquivos concatenados (cada nome de arquivo é separado por um '\n').
             
-'''
+
 
 
 import java.io.IOException;
@@ -34,7 +34,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.security.MessageDigestSpi;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
@@ -73,7 +72,12 @@ public class ProtocolController {
         this.onlineUsers.put("Todos", group);
     }
 
-
+    /**
+     * 
+     * @param targetUser, variável que representa o usuário para quem deseja enviar a mensagem
+     * @param msg, variável que representa a mensagem que está sendo enviada
+     * @throws IOException
+     */
     public void send(String targetUser, String msg) throws IOException {
         Byte type;
         Message message = null;
@@ -115,6 +119,11 @@ public class ProtocolController {
 
     }
 
+    /**
+     * Envia uma mensagem para todos os membros em um grupo
+     * @param msg, variável que representa a mensagem que será enviada para todo o grupo
+     * @throws IOException
+     */
     private void sendMessageGroup(Message msg) throws IOException {
         byte[] m = msg.getBytes();
 
@@ -124,6 +133,12 @@ public class ProtocolController {
         this.multicastSocket.send(messageOut);
     }
     
+    /**
+     * Manda uma mensagem para um usuário específico
+     * @param msg, variável que representa a mensagem que está sendo enviada para um membro específico
+     * @param target, variável que representa o IP do usuário para quem deseja enviar uma mensagem diretamente
+     * @throws IOException
+     */
     private void sendMessage(Message msg, InetAddress target) throws IOException {
         byte[] m = msg.getBytes();
         
@@ -132,6 +147,10 @@ public class ProtocolController {
         this.udpSocket.send(messageOut);
     }
     
+    /**
+     * Método que envia uma mensagem do tipo 1 (JOIN) ao tentar entrar em um grupo
+     * @throws IOException
+     */
     public void join() throws IOException {
         /* Envia o endereço de multicasto do grupo para que realize um JOIN */
         this.multicastSocket.joinGroup(group);
@@ -144,10 +163,13 @@ public class ProtocolController {
         this.sendMessageGroup(message);
     }
     
+    /**
+     * Método invocado caso queira sair do chat
+     * @throws IOException
+     */
     public void leave() throws IOException {
-        /* Método invocado caso queira sair do chat*/
 
-        /* Crian uma mensagem que tem o tipo 5 (LEAVE) e o nick de quem sairá do chat */
+        /* Cria uma mensagem que tem o tipo 5 (LEAVE) e o nick de quem sairá do chat */
         Byte type = 5;
         Message message = new Message(type, this.nick, "");
 
@@ -161,18 +183,25 @@ public class ProtocolController {
         close();
     }
     
+    /**
+     * Fecha o socket utilizado para comunicação
+     * @throws IOException
+     */
     public void close() throws IOException {
-        /* Fecha os sockets */
         if (udpSocket != null)
         udpSocket.close();
         if (multicastSocket != null)
             this.multicastSocket.close();
         }
         
+    /**
+     * Processa pacotes datarama verificando o tipo de mensagem, e realizando ações necessárias dependendo da mensagem
+     * @param p, pacote datagrama que será processado
+     * @throws IOException
+     */
     public void processPacket(DatagramPacket p) throws IOException {
         // todo: pegar apenaso util
         Message message = new Message(Arrays.copyOf(p.getData(), p.getLength()));
-        String data = String.valueOf(p.getData());
         
         if(!nick.equals(message.getSource()) || message.getType() == 6) {
             /* Obtem o apelido de quem enviou a mensagem */
@@ -217,6 +246,10 @@ public class ProtocolController {
         
     }
 
+    /**
+     * Recebe pacotes enviados via Multicast
+     * @throws IOException
+     */
     public void receiveMulticastPacket() throws IOException {
 
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
@@ -225,6 +258,10 @@ public class ProtocolController {
         this.processPacket(packet);
     }
 
+    /**
+     * Recebe pacotes enviados via UDP
+     * @throws IOException
+     */
     public void receiveUdpPacket() throws IOException {
 
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
