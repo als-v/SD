@@ -25,6 +25,7 @@
             -Tipo 6: A mensagem do tipo 6 (LIST) é enviada quando um membro deseja listar os arquivos presentes em uma pasta específica, caso ele precise verificar quais arquivos estão presentes
             antes de enviar um arquivo específico para algum outro membro.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 6), a origem (o nick do usuário que a enviou) 
             e a mensagem em sí, que neste caso é uma string com todos os nomes de arquivos concatenados (cada nome de arquivo é separado por um '\n').
+            
 '''
 
 
