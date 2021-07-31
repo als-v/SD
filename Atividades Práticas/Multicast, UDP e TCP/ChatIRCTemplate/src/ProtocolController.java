@@ -1,3 +1,32 @@
+'''
+    ### QUESTÃO 1 - TCP ###
+    # Autores: Juan e Alisson
+    # Data de criação:      20/07/2021
+    # Data de modificação:  30/07/2021
+    #Descrição: Nesta atividade foi implementado um serviço de chat, que possibilita o envio de mensagens para um grupo de pessoas, utilizando mensagens Multicast, o envio de
+        mensagens privadas, ou seja, mensagens enviadas individualmente para pessoas ativas, através de mensagens UDP, utilizando uma interface visual para interação (GUI). 
+        Há vários tipos de mensagens que podem ser enviadas:
+            - Tipo 1: A mensagem do tipo 1 é enviada via Multicast para identificar que uma operação de Join será executada, sendo utilizada quando o usuário deseja se juntar a um grupo de 
+            conversação. Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 1), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+            vazia.
+            - Tipo 2: A mensagem do tipo 2 (JOINACK) é enviada via UDP como resposta para a mensagem de Join recebida. O JOINACK torna possível que as listas de usuários ativos
+            permaneça atualizada. Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 2), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+            vazia.
+            -Tipo 3: A mensagem do tipo 3 (Mensagem Comum) é enviada para todos os membros presentes no grupo utilizando um IP e porta específicos. Essa mensagem é enviada para todos 
+            quando um mensagem comum é enviada no grupo. Uma mensagem comum seria uma mensagem que não resulta em nenhuma ação específica, ela só é mostrada para todos do grupo.
+            Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 3), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+            a mensagem enviada pelo usuário.
+            - Tipo 4: A mensagem do tipo 4 (Mensagem Individual) é enviada via UDP, utilizada para enviar mensagens para um usuários específico, que neste caso estará escutando na porta 6799.
+            Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 4), a origem (o nick do usuário que a enviou) e a mensagem em sí, que neste caso é 
+            a mensagem enviada para um usuário específico.
+            -Tipo 5: A mensagem do tipo 5 (LEAVE) é enviada para todos do grupo identificando que o membro que a mandou, está deixando grupo de conversação, permitindo que aqueles membros ativos
+            que receberam essa mensagem, o retire da lista de membros online.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 5), a origem (o nick do usuário que a enviou) 
+            e a mensagem em sí, que neste caso é vazia.
+            -Tipo 6: A mensagem do tipo 6 (LIST) é enviada quando um membro deseja listar os arquivos presentes em uma pasta específica, caso ele precise verificar quais arquivos estão presentes
+            antes de enviar um arquivo específico para algum outro membro.Nesta mensagem estão presentes os seguintes campos: Tipo da mensagem (tipo 6), a origem (o nick do usuário que a enviou) 
+            e a mensagem em sí, que neste caso é uma string com todos os nomes de arquivos concatenados (cada nome de arquivo é separado por um '\n').
+'''
+
 
 import java.io.IOException;
 import java.net.DatagramPacket;
