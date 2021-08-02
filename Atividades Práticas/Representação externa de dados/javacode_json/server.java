@@ -1,3 +1,16 @@
+/*
+    ### Programação com Representação Externa de Dados ###
+    # Autores: Juan e Alisson
+    # Data de criação:      26/07/2021
+    # Data de modificação:  02/08/2021
+    # Este serviço promove a  comunicação através de um JSON, recebendo como parâmetro um mensagem do client.py, realizando
+    a requisição no banco e retornando por fim uma mensagem para o ciente, notificando se a operação foi bem sucedida ou não. 
+    Este serviço oferece as seguintes funcionalidades remotas:
+        - Inserção e remoção de nota
+        - Consulta de alunos em uma disciplina específica, dado um ano ou semestre
+      Utilizamos o SQLite para que fosse possível gerenciar o banco de dados (gerenciamento_notas.db) 
+*/
+
 import java.net.*;
 import java.io.*;
 import java.util.Arrays;
@@ -7,15 +20,17 @@ import java.sql.*;
 
 public class server {
 
-    // metodo para se conectar ao banco
+    /**
+    * Método para se conectar ao banco
+    */
     public static Connection connect() {
         Connection conn = null;
 
         try {
-            // db parameters
+            // Parâmetro do banco de dados
             String url = "jdbc:sqlite:../database/gerenciamento_notas.db";
 
-            // create a connection to the database
+            //Cria uma conecção ao banco de dados
             conn = DriverManager.getConnection(url);
 
             System.out.println("Connection to SQLite has been established.");
@@ -29,6 +44,12 @@ public class server {
     }
 
     // adiciona ou remove nota
+    /**
+     * Insere uma nova matrícula ou atualiza o campo de notas
+     * @param conn, conexão para que se possa manipular as tabelas do banco
+     * @param requisicao, contém os campos necessários para realizar a inserção no banco
+     * @param response, resposta a requisição que será retornada para o cliente
+     */
     public static void insertMatricula(Connection conn, requisicaoNota requisicao, requisicaoNotaResponse response) {
         // pego os valores
         int ra = requisicao.getAlunoRa();
@@ -99,7 +120,12 @@ public class server {
         }
     }
 
-    // lista os alunos
+    /**
+     * Lista os alunos
+     * @param conn, conexão para que se possa manipular as tabelas do banco
+     * @param requisicao, contém os campos necessários para realizar a listagem de alunos no banco
+     * @param response, resposta a requisição feita ao banco de dados
+     */
     public static void listAlunos(Connection conn, requisicaoListAlunos res, requisicaoListAlunosResponse response) {
         // pego os valores
         String discCode = res.getDisciplinaCodigo();
@@ -159,12 +185,12 @@ public class server {
             ServerSocket listenSocket = new ServerSocket(serverPort);
             Socket clientSocket = listenSocket.accept();
 
-            // receber msg
+            // variáveis utilizadas para receber msg
             String valueStr;
             int sizeBuffer;
             byte[] buffer;
 
-            // enviar msg
+            // variáveis utilizadas para enviar msg
             byte[] msg;
             String msgSize;
             byte[] size;
@@ -188,7 +214,7 @@ public class server {
                 requisicao requisicao = null;
                 String json = null;
 
-                // apenas espero comunicacao json
+                // apenas espero comunicação via json
                 if (bufferJsonFlag.equals("1")) {
 
                     // pega a proxima mensagem: requisicaoOpt: qual operacao usar

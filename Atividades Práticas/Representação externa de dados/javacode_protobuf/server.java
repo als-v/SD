@@ -1,3 +1,19 @@
+/*
+ 
+ ### Programação com Representação Externa de Dados ###
+ # Autores: Juan e Alisson
+ # Data de criação:      26/07/2021
+ # Data de modificação:  02/08/2021
+ # Este serviço promove a comunicação utilizando Protocol Buffer, recebendo como parâmetro um mensagem do client.py através de um socket TCP, realizando
+ a requisição no banco e retornando por fim uma mensagem para o ciente, notificando se a operação foi bem sucedida ou não. 
+ Este serviço oferece as seguintes funcionalidades remotas:
+ - Inserção e remoção de nota
+ - Consulta de alunos em uma disciplina específica, dado um ano ou semestre
+ Utilizamos o SQLite para que fosse possível gerenciar o banco de dados (gerenciamento_notas.db) 
+
+*/
+
+
 import java.net.*;
 import java.io.*;
 import java.util.Arrays;
@@ -7,7 +23,10 @@ import java.sql.*;
 
 public class server {
 
-    // metodo para se conectar ao banco
+    /**
+     * Método para se conectar ao banco
+     * @return
+     */
     public static Connection connect() {
         Connection conn = null;
 
@@ -96,7 +115,12 @@ public class server {
         }
     }
 
-    // lista os alunos
+    /**
+     * Lista os alunos
+     * @param conn, utilizada para realizar a conexão com o banco de dados
+     * @param res, resposta que será enviada para o cliente
+     * @param requisicaoAlunos, variável que contém todos os campos necessários para realizar a requisição para o banco
+     */
     public static void listAlunos(Connection conn, Gerenciamentodenotas.requisicaoResponseConsultaAlunos.Builder res,
             Gerenciamentodenotas.requisicaoConsultaAlunos requisicaoAlunos) {
         // pego os valores
@@ -124,7 +148,7 @@ public class server {
                         + String.valueOf(semestre) + " semestre, nessa disciplina.");
             }
 
-            // para cada um dos alunos, salvo eles
+            //salvo cada um dos alunos
             while (resultSet.next()) {
                 Gerenciamentodenotas.Aluno.Builder aluno = Gerenciamentodenotas.Aluno.newBuilder();
 
@@ -134,7 +158,7 @@ public class server {
                 res.addAluno(aluno);
             }
 
-            // tudo certo
+            // defino a mensagem que será retornada como resposta
             res.setMessage("Resultado consulta:");
         } catch (SQLException e) {
             res.setMessage(String.valueOf(e.getMessage()));
@@ -177,7 +201,7 @@ public class server {
                 // variaveis para as requisicoes
                 Gerenciamentodenotas.requisicaoOpt p = null;
                 
-                // apenas espero comunicacao protobuf
+                //verifico se a comunicação desejada é através do protobuf
                 if (bufferJsonFlag.equals("0")) {
 
                     // pega a proxima mensagem: requisicaoOpt: qual operacao usar
@@ -236,7 +260,7 @@ public class server {
                             break;
                             
                         case 3:
-                            /* realiza o unmarshalling */
+                            // realiza o unmarshalling 
                             Gerenciamentodenotas.requisicaoResponseConsultaAlunos.Builder resAluno = Gerenciamentodenotas.requisicaoResponseConsultaAlunos.newBuilder();
                             Gerenciamentodenotas.requisicaoConsultaAlunos requisicaoListAlunos = Gerenciamentodenotas.requisicaoConsultaAlunos
                                     .parseFrom(buffer);

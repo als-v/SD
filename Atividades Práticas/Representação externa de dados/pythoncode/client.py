@@ -1,3 +1,13 @@
+'''
+    ### Programação com Representação Externa de Dados ###
+    # Autores: Juan e Alisson
+    # Data de criação:      26/07/2021
+    # Data de modificação:  02/08/2021
+    # Este cliente é responsável pela comunicação com o Servidor, sendo que o envio desses dados para comunicação podem ser feitos utilizando Protocol Buffer ou JSON, sendo 
+    possível alternar entre os dois tipos de comunicação. O cliente pode realizar inserção e remoção de um certo aluno em uma matrícula específica. Também é possível listar
+    os alunos de uma disciplina em um ano/semestre. 
+'''
+
 import socket
 import gerenciamentodenotas_pb2
 import json
