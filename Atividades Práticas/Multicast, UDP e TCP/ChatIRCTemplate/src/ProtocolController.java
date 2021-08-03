@@ -203,7 +203,7 @@ public class ProtocolController {
         // todo: pegar apenaso util
         Message message = new Message(Arrays.copyOf(p.getData(), p.getLength()));
         
-        if(!nick.equals(message.getSource()) || message.getType() == 6) {
+        if(!nick.equals(message.getSource())) {
             /* Obtem o apelido de quem enviou a mensagem */
             String senderNick = message.getSource();
 
@@ -212,7 +212,6 @@ public class ProtocolController {
                 if(nick.equals(senderNick) == false) {
                     /* Salva o apelido e endereço na lista de usuários ativos */
                     this.onlineUsers.put(senderNick, p.getAddress());
-    
                     /* Envia JOINACK */
                     send(senderNick, "JOINACK");
                 }
@@ -222,7 +221,12 @@ public class ProtocolController {
             } else if (message.getType() == 5) {
                 /* remove o apelido e endereço da lista de suários ativos */
                 this.onlineUsers.remove(senderNick);
-            } else if (message.getType() == 6) {
+            } 
+            
+            /* Atualiza UI */
+            ui.update(message);
+        } else {
+            if (message.getType() == 6) {
                 /* Percorre o diretório definido anteriormente, adicionando o nome dos arquivos na variável arq (separando os nomes por \n)*/
                 File files = new File(this.diretorio);
                 File listaFiles[] = files.listFiles();
@@ -239,9 +243,6 @@ public class ProtocolController {
                 Message msgArquivos = new Message(message.getType(), this.nick, String.valueOf(arq));
                 this.ui.update(msgArquivos);
             }
-            
-            /* Atualiza UI */
-            ui.update(message);
         }
         
     }
