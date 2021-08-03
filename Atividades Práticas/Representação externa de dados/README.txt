@@ -28,18 +28,6 @@ Bibliotecas Client:
     - jsonpickle: É uma biblioteca para a conversão bidirecional de objetos Python complexos e JSON. 
     - json: É um formato de troca de dados leve inspirado na sintaxe literal do objeto JavaScript.
 
-Compilar e executar:
-Entrar na pasta 'javacode_protobuf'
-    - cd javacode_protobuf/
-
-    Rodar o protobuf first
-    - javac -cp ./protobuf-java-3.17.3.jar *.java
-
-    Rodar o server
-    - java -cp ".;protobuf-java-3.17.3.jar .;sqlite-jdbc-3.27.2.1.jar" server
-
-
-
 Exemplos de uso: 
 	Exemplo de uso 1: Cadastrar uma nota a um aluno no banco de dados usando a comunicação JSON
 
