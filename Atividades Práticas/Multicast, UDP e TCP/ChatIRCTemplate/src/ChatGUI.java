@@ -329,7 +329,8 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             styledDoc.insertString(styledDoc.getLength(), "<" + id + "> ", greenStyle);
             styledDoc.insertString(styledDoc.getLength(), mensagem + "\n", blackStyle);
 
-            areaMensagem.setCaretPosition(areaMensagem.getText().length());
+            areaMensagem.setCaretPosition(areaMensagem.getDocument().getLength());
+
         } 
         catch (BadLocationException ble) {
             System.err.println("Erro ao escrever mensagem na UI" + ble);
@@ -347,7 +348,8 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
             styledDoc.insertString(styledDoc.getLength(), "<" + id + "> ", blueStyle);
             styledDoc.insertString(styledDoc.getLength(), mensagem + "\n", blackStyle);
 
-            areaMensagem.setCaretPosition(areaMensagem.getText().length());
+            areaMensagem.setCaretPosition(areaMensagem.getDocument().getLength());
+
         } 
         catch (BadLocationException ble) {
             System.err.println("Erro ao escrever mensagem na UI" + ble);
@@ -383,18 +385,36 @@ public class ChatGUI extends javax.swing.JFrame implements UIControl {
     public void update(Message m) {
         switch (m.getType()) {
             case 1:
+                //Caso a mensagem seja do tipo 1 (JOIN)
+                //Adiciona novo apelido
                 this.addNickname(m.getSource());
                 break;
             case 2:
+                //Caso a mensagem seja do tipo 2 (JOINACK)
+                //Adiciona novo apelido na lista
                 this.addNickname(m.getSource());
                 break;
+                //Caso seja uma mensagem do tipo 3 (Mensagem Comum)
+                //Não é necessário fazer nada
             case 3:
             case 4:
+                //Caso seja uma mensagem do tipo 4 (MENSAGEM INDIVIDUAL)
+                //Escreve no chat o apelido e a mensagem recebida
                 this.writeMessage(m.getSource(), m.getMessage());
                 break;
             case 5:
+                //Caso seja uma mensagem do tipo 5 (LEAVE)
+                //Retira o apelida da lista de clientes onlines
                 this.remNickname(m.getSource());
                 break;
+            case 6:
+                //Verifica se é a própria mensagem LIST para não mostrar duas vezes no chat
+                if(!m.getMessage().equals("LIST")) {
+                    //Está certo colocar writeLocalMessage?
+                    this.writeLocalMessage("Comando LIST: Arquivos encontrados",m.getMessage());
+                }
+                break;
+            
         }
         
     }

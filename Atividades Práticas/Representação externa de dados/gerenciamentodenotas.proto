@@ -31,7 +31,6 @@ message Aluno {
 	int32 ra = 1;
 	string nome = 2;
 	int32 periodo = 3;
-	int32 cod_curso = 4;
 }
 
 // response consulta alunos
