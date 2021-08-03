@@ -74,8 +74,12 @@ def enviarOptJson(flag):
     clientSocketJson.send((str(size) + "\n").encode())
     clientSocketJson.send(msg.encode('utf-8'))
 
-
-
+# inserirRemoverNota: Insere ou remove nota de um aluno, dada a uma matéria, ano e semestre.
+# Tem como parâmetro alunoRA: Ra do aluno
+# disciplinaCodigo: o qual representa o código da disciplina
+# disciplinaAno: Representa o ano que será utilizado para procurar as notas da disciplina
+# disciplinaSemestre: Semestre que será utilizado para buscar a disciplina requisitada
+# alunoNota: Nova nota que será atribuida ao aluno
 def inserirRemoverNota(alunoRA, disciplinaCodigo, disciplinaAno, disciplinaSemestre, alunoNota, flag=1):
     enviarComunicacao()
 
@@ -107,6 +111,7 @@ def inserirRemoverNota(alunoRA, disciplinaCodigo, disciplinaAno, disciplinaSemes
         print('\n=========================\n',
               response, '\n=========================\n')
 
+    # Verifica o tipo de comunicação que será utilizada, neste caso, verifica se a comunicação será via JSON
     elif bufferJsonFlag == "1":
         enviarOptJson(flag)
 
@@ -135,7 +140,10 @@ def inserirRemoverNota(alunoRA, disciplinaCodigo, disciplinaAno, disciplinaSemes
         print('\n=========================\n',
               response['message'], '\n=========================\n')
 
-
+# consultaAluno: Consulta os alunos de uma disciplina
+# disciplinaCodigo: código da disciplina que será utilizada para consultar os alunos
+# disciplinaAno: Ano da disciplina que será utilizada para consultar os alunos
+# disciplinaSemestre: Semestre da disciplina que será consultada
 def consultaAluno(disciplinaCodigo, disciplinaAno, disciplinaSemestre):
     enviarComunicacao()
 
@@ -218,6 +226,7 @@ def main():
 
         comando = input('\nSelecione uma operacao: ')
 
+        # recebe os dados necessários para que seja possível realizar a inserção ou remoção de uma nota no banco
         if (comando == str(1) or comando == str(2)):
             alunoRA = input('> Digite o RA do aluno: ')
             disciplinaCodigo = input('> Digite o codigo da disciplina: ')
@@ -238,6 +247,7 @@ def main():
             else:
                 print('\nERRO: preencha os valores corretamente\n')
 
+        # consulta aluno em um disciplina específica
         elif comando == str(3):
             disciplinaCodigo = input('> Digite o codigo da disciplina: ')
             disciplinaAno = input('> Digite o ano da disciplina: ')
@@ -249,6 +259,7 @@ def main():
             else:
                 print('\nERRO: preencha os valores corretamente\n')
 
+        # altera o modo utilizado para comunicação
         elif comando == str(4):
             if bufferJsonFlag == "0":
                 bufferJsonFlag = "1"
