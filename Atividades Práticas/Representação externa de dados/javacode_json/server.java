@@ -50,7 +50,7 @@ public class server {
      * @param requisicao, contém os campos necessários para realizar a inserção no banco
      * @param response, resposta a requisição que será retornada para o cliente
      */
-    public static void insertMatricula(Connection conn, requisicaoNota requisicao, requisicaoNotaResponse response) {
+    public static int insertMatricula(Connection conn, requisicaoNota requisicao, requisicaoNotaResponse response) {
         // pego os valores
         int ra = requisicao.getAlunoRa();
         String codigoDisciplina = requisicao.getDisciplinaCodigo();
@@ -70,7 +70,7 @@ public class server {
             if (!resultadoQuery.isBeforeFirst()) {
                 mensagem = "RA nao encontrado";
                 response.setMessage(mensagem);
-                return;
+                return 0;
             }
             
             // procuro pelo codigo da disciplina
@@ -79,24 +79,24 @@ public class server {
                 if (!resultadoQuery.isBeforeFirst()) {
                     mensagem = "Disciplina inexistente";
                     response.setMessage(mensagem);
-                    return;
-            }
-
+                    return 0;
+                }
+                
             // procuro se o aluno está matriculado
             resultadoQuery = statement.executeQuery("SELECT * FROM matricula WHERE (ra_aluno = " + String.valueOf(ra)
-                    + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "
-                    + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
+            + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "
+            + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
             if (!resultadoQuery.isBeforeFirst()) {
                 statement.execute(
-                        "INSERT INTO matricula (ano, semestre, cod_disciplina, ra_aluno, nota, faltas) VALUES ("
-                                + String.valueOf(ano) + ", " + String.valueOf(semestre) + ", "
-                                + String.valueOf(codigoDisciplina) + ", " + String.valueOf(ra) + ", ''" + ", '');");
+                    "INSERT INTO matricula (ano, semestre, cod_disciplina, ra_aluno, nota, faltas) VALUES ("
+                                + String.valueOf(ano) + ", " + String.valueOf(semestre) + ", '"
+                                + String.valueOf(codigoDisciplina) + "', " + String.valueOf(ra) + ", ''" + ", '');");
 
-                mensagem = "Cadastrado a matricula do aluno no ano de " + String.valueOf(ano) + ", no "
+                                mensagem = "Cadastrado a matricula do aluno no ano de " + String.valueOf(ano) + ", no "
                         + String.valueOf(semestre) + " semestre.";
-                response.setMessage(mensagem);
+                        response.setMessage(mensagem);
             }
-
+            
             if (nota == -1) {
                 // excluir a nota
                 statement.execute("UPDATE matricula SET nota = '' WHERE (ra_aluno = " + String.valueOf(ra)
@@ -114,9 +114,12 @@ public class server {
                 response.setMessage(mensagem);
             }
 
+            return 0;
+
         } catch (SQLException e) {
             // erro ao realizar a ação
             response.setMessage(String.valueOf(e.getMessage()));
+            return 0;
         }
     }
 
@@ -126,7 +129,7 @@ public class server {
      * @param requisicao, contém os campos necessários para realizar a listagem de alunos no banco
      * @param response, resposta a requisição feita ao banco de dados
      */
-    public static void listAlunos(Connection conn, requisicaoListAlunos res, requisicaoListAlunosResponse response) {
+    public static int listAlunos(Connection conn, requisicaoListAlunos res, requisicaoListAlunosResponse response) {
         // pego os valores
         String discCode = res.getDisciplinaCodigo();
         int ano = res.getDisciplinaAno();
@@ -144,6 +147,7 @@ public class server {
             if (!resultSet.isBeforeFirst()) {
                 message = "Disciplina inexistente";
                 response.setMessage(message);
+                return 0;
             }
 
             // pego todos os alunos daquela disciplina
@@ -170,9 +174,11 @@ public class server {
             // tudo certo
             message = "Resultado consulta:";
             response.setMessage(message);
+            return 0;
 
         } catch (SQLException e) {
             response.setMessage(String.valueOf(e.getMessage()));
+            return 0;
         }
     }
 
@@ -195,6 +201,8 @@ public class server {
             String msgSize;
             byte[] size;
             byte[] msgEncode;
+            
+            int result = 0;
 
             while (true) {
 
@@ -242,7 +250,7 @@ public class server {
 
                             // realiza o unmarshalling
                             requisicaoNota requisicaoNota = gson.fromJson(json, requisicaoNota.class);
-                            insertMatricula(conn, requisicaoNota, requisicaoNotaResponse);
+                            result = insertMatricula(conn, requisicaoNota, requisicaoNotaResponse);
 
                             // formata a resposta para json
                             json = gson.toJson(requisicaoNotaResponse);
@@ -254,7 +262,7 @@ public class server {
 
                             // realiza o unmarshalling
                             requisicaoListAlunos requisicaoListAlunos = gson.fromJson(json, requisicaoListAlunos.class);
-                            listAlunos(conn, requisicaoListAlunos, requisicaoListAlunosResponse);
+                            result = listAlunos(conn, requisicaoListAlunos, requisicaoListAlunosResponse);
 
                             // formata a resposta para Json
                             json = gson.toJson(requisicaoListAlunosResponse);

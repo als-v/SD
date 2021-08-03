@@ -1,5 +1,5 @@
 #Ignora arquivos .class
 *.class
 #*.jar
-*.db
+#*.db
 /__pycache__
