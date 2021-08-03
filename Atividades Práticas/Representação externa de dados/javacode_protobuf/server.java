@@ -48,7 +48,7 @@ public class server {
     }
 
     // adiciona ou remove nota
-    public static void insertMatricula(Connection conn, Gerenciamentodenotas.requisicaoResponseNotas.Builder res,
+    public static int insertMatricula(Connection conn, Gerenciamentodenotas.requisicaoResponseNotas.Builder res,
             Gerenciamentodenotas.requisicaoNotas requisicaoNotas) {
         // pego os valores
         int ra = requisicaoNotas.getRa();
@@ -68,7 +68,7 @@ public class server {
                     .executeQuery("SELECT * FROM aluno WHERE ra = " + String.valueOf(ra) + ";");
             if (!resultadoQuery.isBeforeFirst()) {
                 res.setMessage("RA nao encontrado");
-                return;
+                return 0;
             }
 
             // procuro pelo codigo da disciplina
@@ -76,7 +76,7 @@ public class server {
                     "SELECT * FROM disciplina WHERE codigo = '" + String.valueOf(codigoDisciplina) + "';");
             if (!resultadoQuery.isBeforeFirst()) {
                 res.setMessage("Disciplina inexistente");
-                return;
+                return 0;
             }
 
             // procuro se o aluno está matriculado
@@ -86,8 +86,8 @@ public class server {
             if (!resultadoQuery.isBeforeFirst()) {
                 statement.execute(
                         "INSERT INTO matricula (ano, semestre, cod_disciplina, ra_aluno, nota, faltas) VALUES ("
-                                + String.valueOf(ano) + ", " + String.valueOf(semestre) + ", "
-                                + String.valueOf(codigoDisciplina) + ", " + String.valueOf(ra) + ", ''" + ", '');");
+                                + String.valueOf(ano) + ", " + String.valueOf(semestre) + ", '"
+                                + String.valueOf(codigoDisciplina) + "', " + String.valueOf(ra) + ", ''" + ", '');");
 
                 res.setMessage("Cadastrado a matricula do aluno no ano de " + String.valueOf(ano) + ", no "
                         + String.valueOf(semestre) + " semestre.");
@@ -109,9 +109,11 @@ public class server {
                 res.setMessage("OK");
             }
 
+            return 0;
         } catch (SQLException e) {
             // erro ao realizar a ação
             res.setMessage(String.valueOf(e.getMessage()));
+            return 0;
         }
     }
 
@@ -121,7 +123,7 @@ public class server {
      * @param res, resposta que será enviada para o cliente
      * @param requisicaoAlunos, variável que contém todos os campos necessários para realizar a requisição para o banco
      */
-    public static void listAlunos(Connection conn, Gerenciamentodenotas.requisicaoResponseConsultaAlunos.Builder res,
+    public static int listAlunos(Connection conn, Gerenciamentodenotas.requisicaoResponseConsultaAlunos.Builder res,
             Gerenciamentodenotas.requisicaoConsultaAlunos requisicaoAlunos) {
         // pego os valores
         String discCode = requisicaoAlunos.getCodDisciplina();
@@ -137,6 +139,7 @@ public class server {
                     .executeQuery("SELECT * FROM disciplina WHERE codigo = '" + String.valueOf(discCode) + "';");
             if (!resultSet.isBeforeFirst()) {
                 res.setMessage("Disciplina inexistente");
+                return 0;
             }
 
             // pego todos os alunos daquela disciplina
@@ -160,8 +163,10 @@ public class server {
 
             // defino a mensagem que será retornada como resposta
             res.setMessage("Resultado consulta:");
+            return 0;
         } catch (SQLException e) {
             res.setMessage(String.valueOf(e.getMessage()));
+            return 0;
         }
     }
 
@@ -184,6 +189,7 @@ public class server {
             String msgSize;
             byte[] size;
 
+            int result = 0;
             while (true) {
 
                 // enviar e receber pelo socket
@@ -225,7 +231,7 @@ public class server {
                             Gerenciamentodenotas.requisicaoResponseNotas.Builder resNota = Gerenciamentodenotas.requisicaoResponseNotas.newBuilder();
                             Gerenciamentodenotas.requisicaoNotas requisicaoAddNota = Gerenciamentodenotas.requisicaoNotas
                                     .parseFrom(buffer);
-                            insertMatricula(conn, resNota, requisicaoAddNota);
+                            result = insertMatricula(conn, resNota, requisicaoAddNota);
 
                             // serializo a resposta
                             msg = resNota.toString().getBytes();
@@ -245,7 +251,7 @@ public class server {
                             Gerenciamentodenotas.requisicaoResponseNotas.Builder resNota2 = Gerenciamentodenotas.requisicaoResponseNotas.newBuilder();
                             Gerenciamentodenotas.requisicaoNotas requisicaoRemoveNotas = Gerenciamentodenotas.requisicaoNotas
                             .parseFrom(buffer);
-                            insertMatricula(conn, resNota2, requisicaoRemoveNotas);
+                            result = insertMatricula(conn, resNota2, requisicaoRemoveNotas);
 
                             // serializo a resposta
                             msg = resNota2.toString().getBytes();
@@ -264,7 +270,7 @@ public class server {
                             Gerenciamentodenotas.requisicaoResponseConsultaAlunos.Builder resAluno = Gerenciamentodenotas.requisicaoResponseConsultaAlunos.newBuilder();
                             Gerenciamentodenotas.requisicaoConsultaAlunos requisicaoListAlunos = Gerenciamentodenotas.requisicaoConsultaAlunos
                                     .parseFrom(buffer);
-                            listAlunos(conn, resAluno, requisicaoListAlunos);
+                            result = listAlunos(conn, resAluno, requisicaoListAlunos);
 
                             // serializo a resposta
                             msg = resAluno.toString().getBytes();
