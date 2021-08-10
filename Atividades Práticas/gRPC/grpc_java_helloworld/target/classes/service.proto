@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+option java_multiple_files = true;
+option java_outer_classname = "ServiceDatabaseProto";
+
 // interface de serviço
 service ServiceDatabase {
   rpc GerenciaNotas (Request) returns (Response) {}

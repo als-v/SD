@@ -29,16 +29,16 @@ public final class ServiceDatabaseGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static final io.grpc.MethodDescriptor<Service.Request,
-      Service.Response> METHOD_GERENCIA_NOTAS =
-      io.grpc.MethodDescriptor.<Service.Request, Service.Response>newBuilder()
+  public static final io.grpc.MethodDescriptor<Request,
+      Response> METHOD_GERENCIA_NOTAS =
+      io.grpc.MethodDescriptor.<Request, Response>newBuilder()
           .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
           .setFullMethodName(generateFullMethodName(
               "ServiceDatabase", "GerenciaNotas"))
           .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-              Service.Request.getDefaultInstance()))
+              Request.getDefaultInstance()))
           .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-              Service.Response.getDefaultInstance()))
+              Response.getDefaultInstance()))
           .build();
 
   /**
@@ -73,8 +73,8 @@ public final class ServiceDatabaseGrpc {
 
     /**
      */
-    public void gerenciaNotas(Service.Request request,
-        io.grpc.stub.StreamObserver<Service.Response> responseObserver) {
+    public void gerenciaNotas(Request request,
+        io.grpc.stub.StreamObserver<Response> responseObserver) {
       asyncUnimplementedUnaryCall(METHOD_GERENCIA_NOTAS, responseObserver);
     }
 
@@ -84,8 +84,8 @@ public final class ServiceDatabaseGrpc {
             METHOD_GERENCIA_NOTAS,
             asyncUnaryCall(
               new MethodHandlers<
-                Service.Request,
-                Service.Response>(
+                Request,
+                Response>(
                   this, METHODID_GERENCIA_NOTAS)))
           .build();
     }
@@ -114,8 +114,8 @@ public final class ServiceDatabaseGrpc {
 
     /**
      */
-    public void gerenciaNotas(Service.Request request,
-        io.grpc.stub.StreamObserver<Service.Response> responseObserver) {
+    public void gerenciaNotas(Request request,
+        io.grpc.stub.StreamObserver<Response> responseObserver) {
       asyncUnaryCall(
           getChannel().newCall(METHOD_GERENCIA_NOTAS, getCallOptions()), request, responseObserver);
     }
@@ -144,7 +144,7 @@ public final class ServiceDatabaseGrpc {
 
     /**
      */
-    public Service.Response gerenciaNotas(Service.Request request) {
+    public Response gerenciaNotas(Request request) {
       return blockingUnaryCall(
           getChannel(), METHOD_GERENCIA_NOTAS, getCallOptions(), request);
     }
@@ -173,8 +173,8 @@ public final class ServiceDatabaseGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<Service.Response> gerenciaNotas(
-        Service.Request request) {
+    public com.google.common.util.concurrent.ListenableFuture<Response> gerenciaNotas(
+        Request request) {
       return futureUnaryCall(
           getChannel().newCall(METHOD_GERENCIA_NOTAS, getCallOptions()), request);
     }
@@ -200,8 +200,8 @@ public final class ServiceDatabaseGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GERENCIA_NOTAS:
-          serviceImpl.gerenciaNotas((Service.Request) request,
-              (io.grpc.stub.StreamObserver<Service.Response>) responseObserver);
+          serviceImpl.gerenciaNotas((Request) request,
+              (io.grpc.stub.StreamObserver<Response>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -222,7 +222,7 @@ public final class ServiceDatabaseGrpc {
   private static final class ServiceDatabaseDescriptorSupplier implements io.grpc.protobuf.ProtoFileDescriptorSupplier {
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return Service.getDescriptor();
+      return ServiceDatabaseProto.getDescriptor();
     }
   }
 
