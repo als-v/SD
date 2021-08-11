@@ -32,7 +32,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
     }
 
     // adiciona ou remove nota
-    public static Response alunoFunction(Connection conn, int opt, int ra, String codigoDisciplina, int ano, int semestre, float nota) {
+    public static void alunoFunction(Connection conn, Response.Builder response, int opt, int ra, String codigoDisciplina, int ano, int semestre, float nota) {
 
         try {
 
@@ -43,24 +43,19 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
             ResultSet resultadoQuery = statement
                     .executeQuery("SELECT * FROM aluno WHERE ra = " + String.valueOf(ra) + ";");
             if (!resultadoQuery.isBeforeFirst()) {
-                Response response = Response.newBuilder()
-                .setMessage("RA nao encontrado")
-                .setStatus(1)
-                .build();
-
-                return response;
+                response.setMessage("RA nao encontrado");
+                response.setStatus(1);
+                return;
             }
 
             // procuro pelo codigo da disciplina
             resultadoQuery = statement.executeQuery(
                     "SELECT * FROM disciplina WHERE codigo = '" + String.valueOf(codigoDisciplina) + "';");
             if (!resultadoQuery.isBeforeFirst()) {
-                Response response = Response.newBuilder()
-                .setMessage("Disciplina inexistente")
-                .setStatus(1)
-                .build();
+                response.setMessage("Disciplina inexistente");
+                response.setStatus(1);
 
-                return response;
+                return;
             }
 
             // procuro se o aluno está matriculado
@@ -80,24 +75,18 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 + String.valueOf(ra) + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina)
                 + "' AND ano = " + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
             
-                Response response = Response.newBuilder()
-                .setMessage("Operacao realizada com sucesso!")
-                .setStatus(2)
-                .build();
-    
-                return response;
+                response.setMessage("Operacao realizada com sucesso!");
+                response.setStatus(2);
+
             } else if (opt == 2) {
                 // excluir a nota
                 statement.execute("UPDATE matricula SET nota = '' WHERE (ra_aluno = " + String.valueOf(ra)
                         + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "
                         + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
         
-                Response response = Response.newBuilder()
-                .setMessage("Operacao realizada com sucesso!")
-                .setStatus(2)
-                .build();
+                response.setMessage("Operacao realizada com sucesso!");
+                response.setStatus(2);
     
-                return response;
             } 
             
             if (opt == 4) {
@@ -116,47 +105,95 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                     aluno.setNota(resultadoQuery.getFloat("nota"));
                     aluno.setFalta(resultadoQuery.getInt("faltas"));
                     
-                    Response response = Response.newBuilder()
-                    .setMessage("Operacao realizada com sucesso!")
-                    .addAluno(aluno)
-                    .setStatus(2)
-                    .build();
-
-                    return response;
+                    response.setMessage("Operacao realizada com sucesso!");
+                    response.addAluno(aluno);
+                    response.setStatus(2);
                 }
     
             }
 
         } catch (SQLException e) {
             // erro ao realizar a ação
-            Response response = Response.newBuilder()
-                .setMessage(String.valueOf(e.getMessage()))
-                .setStatus(1)
-                .build();
+            response.setMessage(String.valueOf(e.getMessage()));
+            response.setStatus(1);
+        }
+    }
 
-            return response;
+    // adiciona ou remove nota
+    public static void consultaNotasFaltas(Connection conn, Response.Builder response, int opt, String codigoDisciplina, int ano, int semestre) {
+        int qtd = 0;
+
+        try {
+
+            // crio o statement que será usado para as querys
+            Statement statement = conn.createStatement();
+            
+            // procuro pelo codigo da disciplina
+            ResultSet resultadoQuery = statement.executeQuery(
+                "SELECT * FROM disciplina WHERE codigo = '" + String.valueOf(codigoDisciplina) + "';");
+            if (!resultadoQuery.isBeforeFirst()) {
+                response.setMessage("Disciplina inexistente");
+                response.setStatus(1);
+
+                return;
+            }
+
+            if (opt == 5) {
+                resultadoQuery = statement.executeQuery(
+                    "SELECT * FROM matricula WHERE cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = " + 
+                    String.valueOf(ano) + ";");
+            } else if (opt == 6) {
+                resultadoQuery = statement.executeQuery(
+                    "SELECT * FROM matricula WHERE cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND semestre = " +
+                    String.valueOf(semestre) + ";");
+            }
+
+
+            while(resultadoQuery.next()){
+                qtd += 1;
+                Aluno.Builder aluno = Aluno.newBuilder();
+
+                aluno.setNota(resultadoQuery.getFloat("nota"));
+                aluno.setFalta(resultadoQuery.getInt("faltas"));
+                
+                response.addAluno(aluno);
+            }
+
+            if (qtd == 0){
+                response.setMessage("Nenhum registro encontrado:");
+            } else {
+                response.setMessage("Resultados:");
+            }
+
+            response.setStatus(2);
+
+        } catch (SQLException e) {
+            // erro ao realizar a ação
+            response.setMessage(String.valueOf(e.getMessage()));
+            response.setStatus(1);
         }
 
-        return null;
     }
 
     @Override
     public void gerenciaNotas(Request request, StreamObserver<Response> responseObserver) {
         Connection conn = connect();
-        Response response = null;
+        Response.Builder response = Response.newBuilder();
 
         switch(request.getOpt()){
             case 1:
             case 2:
             case 3:
             case 4:
-            // todo: adicionar/remover/alterar
-            //todo: listar alunos
-            response = alunoFunction(conn, request.getOpt(), request.getRa(), request.getCodDisciplina(), request.getAno(), request.getSemestre(), request.getNota());
-            break;
+                alunoFunction(conn, response, request.getOpt(), request.getRa(), request.getCodDisciplina(), request.getAno(), request.getSemestre(), request.getNota());
+                break;
+            case 5:
+            case 6:
+                consultaNotasFaltas(conn, response, request.getOpt(), request.getCodDisciplina(), request.getAno(), request.getSemestre());
+
         }
 
-        responseObserver.onNext(response);
+        responseObserver.onNext(response.build());
         responseObserver.onCompleted();
 
         try {
