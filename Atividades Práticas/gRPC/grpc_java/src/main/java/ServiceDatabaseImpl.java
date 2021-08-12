@@ -17,40 +17,53 @@ import java.io.*;
 
 /**
  *
- * @author juan
  * @author alisson
+ * @author juan
  */
 
+/**
+ * Interface utilizada para que seja possível acessar seus métodos
+ */
 public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImplBase {
 
     public static Connection connect() {
         Connection conn = null;
 
         try {
-            // db parameters
+            // Parâmetros do banco de dados
             String url = "jdbc:sqlite:../database/gerenciamento_notas.db";
 
-            // create a connection to the database
+            // Cria uma conexão com o banco de dados
             conn = DriverManager.getConnection(url);
 
         } catch (SQLException e) {
-            // caso não consiga se conectar
+            // Caso não consiga se conectar
             System.out.println(e.getMessage());
         }
 
         return conn;
     }
 
-    // adiciona ou remove nota
+    /**
+     * Este método realiza todas funcionalidades que envolvem lidar com alunos ( realiza as operações 1,2,3,4 e 7) 
+     * @param conn, conexão estabelecida com o banco de dados
+     * @param response, mensagem de resposta que será enviada para o cliente
+     * @param opt, operação que será realizada
+     * @param ra, parâmetro que representa o RA de um aluno
+     * @param codigoDisciplina, parâmetro que representa o código de uma disciplina, utilizado para consulta 
+     * @param ano, parâmetro que representa o ano que uma disciplina foi ofertada
+     * @param semestre, parâmetro que representa o semestre que uma disciplina foi ofertada
+     * @param nota, parâmetro que representa a nota que será atribuida a um aluno
+     */
     public static void alunoFunction(Connection conn, Response.Builder response, int opt, int ra, String codigoDisciplina, int ano, int semestre, float nota) {
-        // flag para verificacao de quantos alunos tenho
+        // Flag para verifica do número de alunos
         int flag = 0;
 
         try {
-            // crio o statement que será usado para as querys
+            // Criando o statement que será usado para as querys
             Statement statement = conn.createStatement();
 
-            // procuro pelo codigo da disciplina
+            // Procurando pelo codigo da disciplina
             ResultSet resultadoQuery = statement.executeQuery(
                 "SELECT * FROM disciplina WHERE codigo = '" + String.valueOf(codigoDisciplina) + "';");
             if (!resultadoQuery.isBeforeFirst()) {
@@ -59,9 +72,9 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 return;
             }
 
-            // caso eu queira apenas listar os alunos (opt = 7), nao preciso fazer algumas verificacoes
+            // Caso eu queira apenas listar os alunos (opt = 7), não é necessário fazer algumas verificações
             if (opt != 7){
-                // procuro pelo ra do aluno
+                // Procuro pelo ra do aluno
                 resultadoQuery = statement
                         .executeQuery("SELECT * FROM aluno WHERE ra = " + String.valueOf(ra) + ";");
                 if (!resultadoQuery.isBeforeFirst()) {
@@ -70,11 +83,12 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                     return;
                 }
     
-                // procuro se o aluno está matriculado
+                // Verifico se o aluno está matriculado
                 resultadoQuery = statement.executeQuery("SELECT * FROM matricula WHERE (ra_aluno = " + String.valueOf(ra)
                         + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "
                         + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
-                // se nao tiver matriculado, realiza a matricula
+                
+                // Caso não esteja matriculado, realiza a matricula
                 if (!resultadoQuery.isBeforeFirst()) {
                     statement.execute(
                             "INSERT INTO matricula (ano, semestre, cod_disciplina, ra_aluno, nota, faltas) VALUES ("
@@ -84,7 +98,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
             }
 
             if(opt == 1 || opt == 3){
-                // adiciona/altera nota ao aluno
+                // Adiciona/altera nota ao aluno
                 statement.execute("UPDATE matricula SET nota = " + String.valueOf(nota) + " WHERE (ra_aluno = "
                 + String.valueOf(ra) + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina)
                 + "' AND ano = " + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
@@ -93,7 +107,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 response.setStatus(2);
 
             } else if (opt == 2) {
-                // exclui a nota
+                // Exclui a nota
                 statement.execute("UPDATE matricula SET nota = '' WHERE (ra_aluno = " + String.valueOf(ra)
                         + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "
                         + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
@@ -101,7 +115,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 response.setMessage("Operacao realizada com sucesso!");
                 response.setStatus(2);
             } else if (opt == 4) {
-                // pegar nota de um aluno
+                // Pega nota de um aluno
                 resultadoQuery = statement.executeQuery("SELECT * FROM matricula WHERE (ra_aluno = " + String.valueOf(ra)
                 + " AND cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = "
                 + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
@@ -122,7 +136,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 }
     
             } else if (opt == 7) {
-                // pegar os alunos
+                // Pega os alunos
                 resultadoQuery = statement.executeQuery("SELECT * FROM matricula WHERE (cod_disciplina = '" 
                 + String.valueOf(codigoDisciplina) + "' AND ano = "
                 + String.valueOf(ano) + " AND semestre = " + String.valueOf(semestre) + ");");
@@ -150,23 +164,32 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
             }
 
         } catch (SQLException e) {
-            // erro ao realizar a ação
+            // Erro ao realizar a ação
             response.setMessage(String.valueOf(e.getMessage()));
             response.setStatus(1);
         }
     }
 
     // adiciona ou remove nota
+    /**
+     * Este método consulta notas e falta de uma disciplina dado um ano ou semestre
+     * @param conn, conexão estabelecida com o banco de dados
+     * @param response, mensagem de resposta que será enviada para o cliente
+     * @param opt, operação que será realizada
+     * @param codigoDisciplina, parâmetro que representa o código de uma disciplina, utilizado para consulta 
+     * @param ano, parâmetro que representa o ano que uma disciplina foi ofertada
+     * @param semestre, parâmetro que representa o semestre que uma disciplina foi ofertada
+     */
     public static void consultaNotasFaltas(Connection conn, Response.Builder response, int opt, String codigoDisciplina, int ano, int semestre) {
-        // flag para verificacao de quantos alunos tenho
+        // Flag para verificação da quantidade de alunos
         int qtd = 0;
 
         try {
 
-            // crio o statement que será usado para as querys
+            // Criando o statement que será usado para as querys
             Statement statement = conn.createStatement();
             
-            // procuro pelo codigo da disciplina
+            // Procuro pelo codigo da disciplina
             ResultSet resultadoQuery = statement.executeQuery(
                 "SELECT * FROM disciplina WHERE codigo = '" + String.valueOf(codigoDisciplina) + "';");
             if (!resultadoQuery.isBeforeFirst()) {
@@ -176,7 +199,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 return;
             }
             
-            // procuro pelo ano ou pelo semestre
+            // Procuro pelo ano ou pelo semestre
             if (opt == 5) {
                 resultadoQuery = statement.executeQuery(
                     "SELECT * FROM matricula WHERE cod_disciplina = '" + String.valueOf(codigoDisciplina) + "' AND ano = " + 
@@ -187,7 +210,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                     String.valueOf(semestre) + ";");
             }
 
-
+            // Enquanto houverem resultados
             while(resultadoQuery.next()){
                 qtd += 1;
                 Aluno.Builder aluno = Aluno.newBuilder();
@@ -197,7 +220,8 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
                 
                 response.addAluno(aluno);
             }
-
+            
+            // Caso nenhum aluno seja encontrado
             if (qtd == 0){
                 response.setMessage("Nenhum registro encontrado:");
             } else {
@@ -207,7 +231,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
             response.setStatus(2);
 
         } catch (SQLException e) {
-            // erro ao realizar a ação
+            // Erro ao realizar a ação
             response.setMessage(String.valueOf(e.getMessage()));
             response.setStatus(1);
         }
@@ -216,10 +240,10 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
 
     @Override
     public void gerenciaNotas(Request request, StreamObserver<Response> responseObserver) {
-        // conecao com o banco
+        // Realiza conexão com o banco
         Connection conn = connect();
 
-        // crio a resposta
+        // Resposta é criada
         Response.Builder response = Response.newBuilder();
 
         switch(request.getOpt()){
@@ -228,12 +252,12 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
             case 3:
             case 4:
             case 7:
-                // chamo a funcao relacionado ao aluno
+                // Método relacionado a alunos é chamado
                 alunoFunction(conn, response, request.getOpt(), request.getRa(), request.getCodDisciplina(), request.getAno(), request.getSemestre(), request.getNota());
                 break;
             case 5:
             case 6:
-                // chamo a funcao relacionado as notas e faltas
+                // Método relacionado as notas e faltas é chamado
                 consultaNotasFaltas(conn, response, request.getOpt(), request.getCodDisciplina(), request.getAno(), request.getSemestre());
                 break;
             default:
@@ -245,6 +269,7 @@ public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImpl
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
 
+        // Caso não seja possível se conectar com o banco de dados
         try {
             if (null != conn) {
                 conn.close();
