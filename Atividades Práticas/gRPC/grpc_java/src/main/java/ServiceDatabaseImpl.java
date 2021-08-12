@@ -1,3 +1,14 @@
+/*
+ ### Programação com Representação Externa de Dados ###
+ # Autores: Juan e Alisson
+ # Data de criação:      09/08/2021
+ # Data de modificação:  12/08/2021
+ # Este serviço promove a comunicação utilizando gRPC, sendo que seus métodos são invocados remotamente pelo client.py, recebendo uma mensagem do
+ tipo Request com os parâmetros necessários para utilizar cada método especificamente, enviando como resposta uma mensagem do tipo Response, a qual
+ tem como campos o status da operação (2 se a operação foi bem sucedida e 1 caso aconteça algum problema com a execução da operação), uma mensagem, 
+ a qual descreve o status da operação, e uma lista de alunos que serão enviados de volta para o cliente com todos os campos preenchidos caso
+o cliente realize alguma operação de consulta.   
+*/
 
 import io.grpc.stub.StreamObserver;
 import java.sql.*;
@@ -6,7 +17,8 @@ import java.io.*;
 
 /**
  *
- * @author rodrigo
+ * @author juan
+ * @author alisson
  */
 
 public class ServiceDatabaseImpl extends ServiceDatabaseGrpc.ServiceDatabaseImplBase {
