@@ -1,5 +1,5 @@
 /*
- ### Programação com Representação Externa de Dados ###
+ ### RPC ###
  # Autores: Juan e Alisson
  # Data de criação:      09/08/2021
  # Data de modificação:  12/08/2021
