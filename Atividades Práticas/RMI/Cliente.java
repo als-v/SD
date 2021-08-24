@@ -1,11 +1,10 @@
-
 /**
  * Solicita o servico
- * autor: Rodrigo Campiolo
- * data:22/11/2006
- * modificado em: 03/05/2019
+ * @author alisson
+ * @author juan
+ * data:20/08/2021
+ * modificado em: 23/08/2021
  */
-
 import java.rmi.registry.Registry;
 import java.util.List;
 import java.util.Scanner;
@@ -20,9 +19,15 @@ public class Cliente {
 
             /* obtem a referencia para o objeto remoto */
             Registry registry = LocateRegistry.getRegistry("localhost");
-            Calculadora c = (Calculadora) registry.lookup("ServicoCalculadora");
-
+            Configuracao c = (Configuracao) registry.lookup("ServicoCalculadora");
+            
+            /**
+             * Tipo de requisição que será realizada
+             */
             int tipoRequisicao;
+            /**
+             * Seleciona a operação desejada
+             */
             System.out.println("Selecione uma operação:");
             while (true) {
                 System.out.println(
@@ -34,8 +39,13 @@ public class Cliente {
                 int anoDisciplina;
                 int semestreDisciplina;
 
+                /**
+                 * Cria uma nova mensagem do tipo response
+                 */
                 response response = new response();
-
+                /**
+                 * Pega os dados necessários para cada operação
+                 */
                 if (tipoRequisicao > 0 || tipoRequisicao < 9) {
 
                     switch (tipoRequisicao) {
@@ -44,6 +54,9 @@ public class Cliente {
                         case 3:
                         case 4:
                         case 7:
+                            /**
+                             * Executa funções que utilizam o método remoto alunoFunction
+                             */
                             int raAluno;
                             float notaAluno;
 
@@ -71,13 +84,18 @@ public class Cliente {
                             } else {
                                 notaAluno = 0;
                             }
-
+                            /**
+                             * Realiza acesso remoto aos metodos
+                             */
                             response = c.alunoFunction(tipoRequisicao, raAluno, codigoDisciplina, anoDisciplina,
                                     semestreDisciplina, notaAluno);
 
                             break;
                         case 5:
                         case 6:
+                            /**
+                             * Realiza operações que utilizam o método remoto consultaNotasFaltas
+                             */
                             System.out.printf("Digite o codigo da disciplina: ");
                             codigoDisciplina = String.valueOf(new Scanner(System.in).nextLine());
 
@@ -101,16 +119,24 @@ public class Cliente {
                             System.out.println("Opção inválida!!");
                             break;
                     }
-
+                    /**
+                     * Tipo de requisição para encerrar a execução
+                     */
                     if (tipoRequisicao == 8) {
                         System.out.printf("Saindo...");
                         break;
                     }
-
+                    
+                    /**
+                     * Realiza acesso ao objeto remoto response
+                     */
                     switch (tipoRequisicao) {
                         case 1:
                         case 2:
                         case 3:
+                            /**
+                            * Retorna status da operação: Adicionar nota a um aluno, Remover nota de um aluno e Alterar nota de um aluno - #1 sucesso #2 erro
+                            */
                             if (response.getStatusCode() == 1) {
                                 System.out.printf("\n");
                                 System.out.println(response.getMessage());
@@ -122,6 +148,9 @@ public class Cliente {
                             }
                             break;
                         case 4:
+                            /**
+                            * Retorna status da operação e campos de aluno: Consultar nota de um aluno - #1 sucesso #2 erro
+                            */
                             if (response.getStatusCode() == 1) {
                                 System.out.printf("\n");
                                 System.out.println(response.getMessage());
@@ -140,6 +169,9 @@ public class Cliente {
                             break;
                         case 5:
                         case 6:
+                            /**
+                             * Retorna status da operação: Consulta de nota e faltas de uma disciplina pelo ano e Consulta de nota e faltas de uma disciplina pelo semestre
+                             */
                             if (response.getStatusCode() == 1) {
                                 System.out.printf("\n");
                                 System.out.println(response.getMessage());
@@ -161,6 +193,9 @@ public class Cliente {
                             }
                             break;
                         case 7:
+                            /**
+                             * Verifica status da resposta e exibe a resposta contendo todos os campos da tabela aluno
+                             */
                             if (response.getStatusCode() == 1) {
                                 System.out.printf("\n");
                                 System.out.println(response.getMessage());
@@ -171,7 +206,7 @@ public class Cliente {
                                     System.out.printf("\n==== Aluno %d ====\n", i);
                                     System.out.printf("     RA: %d\n", aluno.getRa());
                                     System.out.printf("     Periodo: %d\n", aluno.getPeriodo());
-                                    System.out.printf("     Nota: %2.f\n", aluno.getNota());
+                                    System.out.printf("     Nota: %.2f\n", aluno.getNota());
                                     System.out.printf("     Falta: %d\n", aluno.getFalta());
                                     System.out.printf("\n====        ====\n");
                                     i += 1;
