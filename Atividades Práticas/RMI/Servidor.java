@@ -1,8 +1,9 @@
 /**
- * Inicializa o servico
- * autor: Rodrigo Campiolo
- * data: 22/11/2006
- * modificado em :03/05/2019
+ * Inicializa o servidor
+ * @author alisson
+ * @author juan
+ * data:20/08/2021
+ * modificado em: 23/08/2021
  */
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -11,7 +12,7 @@ public class Servidor {
     public static void main(String args[]) {
        try {
             /* inicializa um objeto remoto */
-            Calculadora calc = new Calc();
+            Configuracao calc = new Config();
 
             /* registra o objeto remoto no Binder */
             Registry registry = LocateRegistry.getRegistry("localhost");

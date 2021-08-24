@@ -1,8 +1,10 @@
 
 /**
  * Implementacao do objeto remoto
- * autor: Rodrigo Campiolo
- * data: 22/11/2006
+ * @author alisson
+ * @author juan
+ * data:20/08/2021
+ * modificado em: 23/08/2021
  */
 
 import java.rmi.Remote;
@@ -10,9 +12,9 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.*;
 
-public class Calc extends UnicastRemoteObject implements Calculadora {
+public class Config extends UnicastRemoteObject implements Configuracao {
 
-    public Calc() throws RemoteException {
+    public Config() throws RemoteException {
         super();
         System.out.println("Objeto remoto instanciado");
     }

@@ -1,5 +1,10 @@
 import java.sql.*;
-
+/**
+ * @author alisson
+ * @author juan
+ * data:20/08/2021
+ * modificado em: 23/08/2021
+ */
 public class db {
     /**
      * Método para se conectar ao banco

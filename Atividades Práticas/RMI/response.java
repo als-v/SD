@@ -2,6 +2,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Objeto remoto acessado pelo cliente
+ * @author alisson
+ * @author juan
+ * data:20/08/2021
+ * modificado em: 23/08/2021
+ */
 public class response implements Serializable {
     private int statusCode;
     private String message;
