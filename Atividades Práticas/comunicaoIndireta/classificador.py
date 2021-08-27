@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import pika
 import sys
-import json
 
 from pika import connection
+from pika.spec import Channel
 
 def main():
     connection = pika.BlockingConnection(
@@ -18,6 +18,8 @@ def main():
             # print(" [x] %r:%r" % (method.routing_key, body))
             key = ''
             data = body.decode()
+            print(data, "\n")
+    
             if 'fever'in data:
                 key = 'fever'
                 
@@ -37,7 +39,6 @@ def main():
             channel.exchange_declare(exchange='direct_logs', exchange_type='direct')
     # Aqui envio o que recebi da fila de tweets
             channel.basic_publish(exchange='direct_logs', routing_key=str(key), body=body)
-
     channel.basic_consume(
     queue='tweets', on_message_callback=callback, auto_ack=True)
 
