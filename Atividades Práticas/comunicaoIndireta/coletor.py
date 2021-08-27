@@ -14,7 +14,7 @@ def main():
         pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
 
-    arq = open('covid19_tweets.csv', errors="ignore")
+    arq = open('./dataset/covid19_tweets.csv', errors="ignore")
     tweetData = csv.DictReader(arq)
 
     for data in tweetData:
