@@ -21,6 +21,7 @@ def main():
 
     def callback(ch, method, properties, body):
             key = ''
+            # Converto para string
             data = body.decode()
 
             # Verifico quais palavras pertencem ao tweet
