@@ -2,6 +2,8 @@
 import pika
 import sys
 
+# Serão criadas três filas : smell, taste e fever. Representando 3 dos sintomas do COVID
+
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
