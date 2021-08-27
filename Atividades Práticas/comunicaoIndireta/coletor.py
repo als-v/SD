@@ -18,14 +18,13 @@ def main():
     tweetData = csv.DictReader(arq)
 
     for data in tweetData:
-        user = "UserName: "+data["user_name"]
+        user = "UserName: " + data["user_name"]
         twt = "Tweet: " + data["text"]
-        userTwt = user+"\n"+twt+"\n"
-        print(userTwt, "\n\n\n\n")
+        dadoUserTweet = user + "\n" + twt + "\n"
          # Aqui eu vou trocar as mensagens recebidas de callback da fila tweet
         channel.exchange_declare(exchange='tweets', exchange_type='direct')
         # Aqui envio o que recebi da fila de tweets
-        channel.basic_publish(exchange='', routing_key='tweets', body= userTwt)
+        channel.basic_publish(exchange='', routing_key='tweets', body= dadoUserTweet)
 
 
 

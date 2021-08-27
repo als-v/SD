@@ -22,7 +22,6 @@ def main():
     def callback(ch, method, properties, body):
             key = ''
             data = body.decode()
-            print(data, "\n")
 
             # Verifico quais palavras pertencem ao tweet
             if 'fever'in data:
