@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import pika
 import sys
+import json
 
 # Serão criadas três filas : smell, taste e fever. Representando 3 dos sintomas do COVID
 
@@ -26,7 +27,10 @@ print(' [*] Waiting for logs. To exit press CTRL+C')
 
 
 def callback(ch, method, properties, body):
-    print(" [x] %r:%r" % (method.routing_key, body))
+    # print(" [x] %r:%r" % (method.routing_key, body))
+    data = json.loads(body)
+    print(" [X] %r %r" % (method.routing_key, data))
+
 
 
 channel.basic_consume(

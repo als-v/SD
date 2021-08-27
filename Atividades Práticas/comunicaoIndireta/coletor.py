@@ -3,6 +3,7 @@ import pika
 import sys
 import csv
 import json
+import numpy as np
 
 from pika import connection
 # Aqui eu vou pegar os tweets e adicionar em uma fila (tweets), para que o
@@ -21,14 +22,17 @@ def main():
 
     with open('covid19_tweets.csv', newline='', errors="ignore") as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        # spamreader = csv.reader(csvfile)
         for row in spamreader:
-            data = ','.join(row)
+            # Descomentar as tres linhas abaixo
+            data = '--'.join(row)
+            # data.append(row)
             print(data)
-            print("\n\n\n\n\n\n", data)
+            print("\n\n\n\n\n\n")
             # Aqui eu vou trocar as mensagens recebidas de callback da fila tweet
             channel.exchange_declare(exchange='tweets', exchange_type='direct')
             # Aqui envio o que recebi da fila de tweets
-            channel.basic_publish(exchange='', routing_key='tweets', body= data)
+            channel.basic_publish(exchange='', routing_key='tweets', body= json.dumps(data))
 
     connection.close()
 
