@@ -1,8 +1,12 @@
-#!/usr/bin/env python
+### Comunicação Indireta ###
+# Autores: Juan e Alisson
+# Data de criação: 19/08/21
+# Data de modificação: 19/08/21
+# Serão criadas três filas : smell, taste e fever. Representando 3 dos sintomas do COVID, dependendo 
 import pika
 import sys
 
-# Serão criadas três filas : smell, taste e fever. Representando 3 dos sintomas do COVID, dependendo 
+
 def main():
 
     connection = pika.BlockingConnection(
@@ -16,9 +20,14 @@ def main():
 
     filas = ["taste", "smell", "fever"]
     topicos = sys.argv[1:]
-    if not topicos or topicos not in filas:
+    if not topicos:
         sys.stderr.write("Necessario se cadastrar em um dos topicos a seguir: [smell] [taste] [fever] \n")
         sys.exit(1)
+
+    for i in range(len(topicos)):
+        if topicos[i] not in filas:
+            sys.stderr.write("Necessario se cadastrar em um dos topicos a seguir: [smell] [taste] [fever] \n")
+            sys.exit(1)
 
     for topico in topicos:
         channel.queue_bind(
@@ -28,14 +37,10 @@ def main():
 
 
     def callback(ch, method, properties, body):
-        # print(" [x] %r:%r" % (method.routing_key, body))
-        # data = json.loads(body)
         data = body.decode()
         print("[X] %r" % (method.routing_key))
-        # print(data.split('--'))
         print(data)
         print("------------------------------------------------------")
-        print("\n\n\n")
 
 
 
@@ -45,4 +50,7 @@ def main():
     channel.start_consuming()
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Encerrado")

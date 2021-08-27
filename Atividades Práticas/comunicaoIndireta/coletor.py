@@ -1,11 +1,13 @@
-#!/usr/bin/env python
+### Comunicação Indireta ###
+# Autores: Juan e Alisson
+# Data de criação: 19/08/21
+# Data de modificação: 19/08/21
+# No coletor os tweets serão obtidos do arquivo covid19_tweets.csv e adicionados em uma fila (tweets), para que o
+# classificador possa utilizar para inserir na fila específica de um tópico
 import pika
 import sys
 import csv
-
 from pika import connection
-# No coletor os tweets serão obtidos do arquivo covid19_tweets.csv e adicionados em uma fila (tweets), para que o
-# classificador possa utilizar para inserir na fila específica de um tópico
 
 def main():
     connection = pika.BlockingConnection(

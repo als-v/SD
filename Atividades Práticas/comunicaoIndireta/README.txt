@@ -1,4 +1,7 @@
 Como executar:
+    Para que seja possível executar essa aplicação é necessário instalar primeiramento o RabbitMQ.
+    Abaixo está o link com as instruções de como realizar esse passo:
+        - link: https://www.rabbitmq.com/download.html 
 
 1. Iniciar o client.py passando como parâmetro as fila que deseja se inscrever:
     - python client.py smell taste
@@ -10,9 +13,8 @@ Como executar:
     - python coletor.py
 
 Bibliotecas:   
-    CSV: 
-    Pika:
-    Sys: 
+    CSV: Implementa classes para gravar e ler dados tabulares no formato CSV
+    Pika: Implementa o protocolo AMQP 0-9-1, tentando permanecer bastante independente da biblioteca de suporte à rede subjacente.
 
 Exemplos de uso: 
     Existem 3 possíveis fila que o cliente podem se inscrever:
