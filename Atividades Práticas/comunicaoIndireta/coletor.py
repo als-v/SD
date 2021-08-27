@@ -13,7 +13,7 @@ def main():
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
-
+    # Abro o arquivo
     arq = open('./dataset/covid19_tweets.csv', errors="ignore")
     tweetData = csv.DictReader(arq)
 
